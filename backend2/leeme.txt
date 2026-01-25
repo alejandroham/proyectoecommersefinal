@@ -1,0 +1,165 @@
+Antes de continuar
+
+
+Necesito estas dependencias.
+
+npm init -y
+
+> se instalan Dependencias
+> 
+
+npm install express cors dotenv jsonwebtoken pg nanoid
+
+npm install bcryptjs
+
+> Instalación de Nodemon y Supertest
+> 
+
+npm install nodemon -D 
+
+npm install -D supertest jest
+
+
+
+
+SQL
+
+CREATE TABLE users (
+  user_id        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  rut            VARCHAR(12) UNIQUE,
+  email          VARCHAR(120) NOT NULL UNIQUE,
+  password_hash  VARCHAR(255) NOT NULL,
+  nombres        VARCHAR(80) NOT NULL,
+  apellido       VARCHAR(80) NOT NULL,
+  telefono       VARCHAR(20),
+  role           VARCHAR(20) NOT NULL DEFAULT 'buyer',
+  is_active      BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at     TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at     TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE products (
+  product_id  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  nombre      VARCHAR(120) NOT NULL,
+  descripcion TEXT,
+  image_url   VARCHAR(500),
+  price       NUMERIC(12,2) NOT NULL,
+  stock       INT NOT NULL DEFAULT 0,
+  catego      VARCHAR(20) NOT NULL DEFAULT 'Notebook',
+  is_active   BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+CREATE TABLE orders (
+  orden_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id     INT NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT,
+  status      VARCHAR(10) NOT NULL DEFAULT 'CART',
+  total       NUMERIC(12,2) NOT NULL DEFAULT 0,
+  ship_label  VARCHAR(45),
+  ship_line1  VARCHAR(120),
+  ship_line2  VARCHAR(120),
+  ship_city   VARCHAR(80),
+  ship_region VARCHAR(80),
+  created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at  TIMESTAMP NOT NULL DEFAULT NOW(),
+  CONSTRAINT chk_orders_status
+    CHECK (status IN ('CART','PLACED','PAID','CANCELLED','SHIPPED','COMPLETED'))
+);
+
+
+
+CREATE TABLE order_items (
+  order_item_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  order_id      INT NOT NULL REFERENCES orders(orden_id) ON DELETE CASCADE,
+  product_id    INT NOT NULL REFERENCES products(product_id) ON DELETE RESTRICT,
+  qty           INT NOT NULL CHECK (qty > 0),
+  unit_price    NUMERIC(12,2) NOT NULL CHECK (unit_price >= 0),
+  line_total    NUMERIC(12,2) NOT NULL DEFAULT 0,
+  CONSTRAINT uk_order_product UNIQUE (order_id, product_id)
+);
+
+
+
+CREATE INDEX idx_orders_user_status
+  ON orders(user_id, status);
+
+CREATE INDEX idx_order_items_order
+  ON order_items(order_id);
+
+CREATE INDEX idx_order_items_product
+  ON order_items(product_id);
+
+
+insersion de usuarios de ejemplo
+
+INSERT INTO users (rut, email, password_hash, nombres, apellido, telefono)
+VALUES
+('12.345.678-9', 'juan.perez@test.cl', '$2b$10$fakehashjuan', 'Juan', 'Pérez', '+56911111111'),
+('9.876.543-2', 'maria.gonzalez@test.cl', '$2b$10$fakehashmaria', 'María', 'González', '+56922222222'),
+('15.222.333-4', 'carlos.soto@test.cl', '$2b$10$fakehashcarlos', 'Carlos', 'Soto', '+56933333333');
+
+INSERT INTO products (nombre, descripcion, image_url, price, stock)
+VALUES
+(
+  'Notebook Dell Latitude 3520',
+  'Intel Core i5, 16GB RAM, 256GB SSD, gráficos Intel Iris Xe',
+  'https://sidemarket01.akamaized.net/2126-large_default/dell-latitude-3520-16gb-ram-256gb-ssd-intel-iris-xe-graphics.webp',
+  899990,
+  10
+),
+(
+  'Microsoft Surface Pro 5',
+  'Pantalla táctil 12.3", 8GB RAM, 256GB SSD',
+  'https://sidemarket02.akamaized.net/1250-large_default/microsoft-surface-pro-5-8gb-ram-256-gb-ssd.webp',
+  749990,
+  5
+),
+(
+  'Gabinete Gamer RGB + Fuente 750W',
+  'Gabinete ATX compatible con M-ATX e ITX, 4 ventiladores RGB incluidos',
+  'https://sidemarket03.akamaized.net/2005-large_default/gabinete-gamer-atx-m-atx-itx-fuente-750w-4-ventiladores-rgb.webp',
+  159990,
+  20
+),
+(
+  'Workstation Dell Precision 3561',
+  'Intel Core i7, 32GB RAM, 512GB SSD, NVIDIA Quadro T1200 4GB',
+  'https://sidemarket03.akamaized.net/1852-large_default/dell-precision-3561-32gb-ram-512gb-ssd-nvidia-quadro-t1200-4gb.webp',
+  1899990,
+  3
+);
+
+
+INSERT INTO orders (user_id, status, total, ship_label, ship_line1, ship_city, ship_region)
+VALUES
+-- Carrito activo
+(1, 'CART', 0, NULL, NULL, NULL, NULL),
+
+-- Orden pagada
+(2, 'PAID', 1659980, 'Casa', 'Av. Providencia 1234', 'Santiago', 'RM'),
+
+-- Orden enviada
+(3, 'SHIPPED', 899990, 'Oficina', 'Av. Apoquindo 4500', 'Las Condes', 'RM');
+
+
+-- Orden 2 (PAID)
+INSERT INTO order_items (order_id, product_id, qty, unit_price, line_total)
+VALUES
+(2, 2, 1, 749990, 749990),
+(2, 3, 2, 159990, 319980),
+(2, 1, 1, 589010, 589010);
+
+-- Orden 3 (SHIPPED)
+INSERT INTO order_items (order_id, product_id, qty, unit_price, line_total)
+VALUES
+(3, 1, 1, 899990, 899990);
+
+
+
+SELECT * FROM products;
+SELECT * FROM users;
+SELECT * FROM orders;
+SELECT * FROM order_items;
+
