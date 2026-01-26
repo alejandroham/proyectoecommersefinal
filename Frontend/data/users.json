@@ -1,0 +1,41 @@
+[
+  {
+    "user_id": 1,
+    "rut": "12.345.678-9",
+    "email": "buyer@tienda.cl",
+    "password_hash": "buyer123",
+    "nombres": "Juan",
+    "apellido": "Pérez",
+    "telefono": "+56911112222",
+    "role": "buyer",
+    "is_active": 1,
+    "created_at": "2025-01-10",
+    "updated_at": "2025-01-10"
+  },
+  {
+    "user_id": 2,
+    "rut": "9.876.543-2",
+    "email": "admin@tienda.cl",
+    "password_hash": "admin123",
+    "nombres": "María",
+    "apellido": "González",
+    "telefono": "+56933334444",
+    "role": "admin",
+    "is_active": 1,
+    "created_at": "2025-01-10",
+    "updated_at": "2025-01-10"
+  },
+  {
+    "user_id": 3,
+    "rut": "15.222.333-4",
+    "email": "sales@tienda.cl",
+    "password_hash": "sales123",
+    "nombres": "Carlos",
+    "apellido": "Ramírez",
+    "telefono": "+56955556666",
+    "role": "sales",
+    "is_active": 1,
+    "created_at": "2025-01-10",
+    "updated_at": "2025-01-10"
+  }
+]

@@ -1,0 +1,99 @@
+/* GRID */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* CARD */
+.product-card {
+  background: #e6e6e6;
+  border-radius: 4px;
+  padding: 12px;
+  position: relative;
+  text-align: center;
+}
+
+/* FAVORITO */
+.fav-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* IMAGEN */
+.product-image {
+  background: #bdbdbd;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.product-image img {
+  max-height: 80px;
+  object-fit: contain;
+}
+
+/* TEXTO */
+.product-title {
+  font-size: 14px;
+  color: #0066cc;
+  margin: 6px 0;
+}
+
+.product-attr {
+  font-size: 12px;
+  color: #444;
+}
+
+/* FOOTER */
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* BOTONES */
+.product-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-add,
+.btn-buy {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-add {
+  background: #1e88e5;
+  color: #fff;
+}
+
+.btn-buy {
+  background: #1976d2;
+  color: #fff;
+}
+
+.btn-add:hover,
+.btn-buy:hover {
+  opacity: 0.9;
+}

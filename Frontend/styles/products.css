@@ -1,0 +1,13 @@
+.shop-container {
+    display: flex;
+}
+
+.products-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* 👈 CLAVE */
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto; /* 👈 centra el contenedor */
+  padding: 20px;
+}

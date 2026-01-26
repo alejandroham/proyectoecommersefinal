@@ -1,0 +1,205 @@
+/* ============================= */
+/* RESET BÁSICO */
+/* ============================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
+
+body.dark {
+  background-color: #0f172a;
+  color: #e5e7eb;
+}
+
+body.light {
+  background-color: #f9fafb;
+  color: #111827;
+}
+
+/* Links */
+body.dark a {
+  color: #e5e7eb;
+}
+
+
+/* ============================= */
+/* VARIABLES DE COLOR (THEME) */
+/* ============================= */
+:root {
+  /* 🎨 Colores base */
+  --color-bg-main: #F4F4F1;        /* Fondo general (vainilla suave, descansa la vista) */
+  --color-bg-dark: #1A1B26;        /* Fondos oscuros: header, footer */
+  --color-bg-light: #FFFFFF;       /* Contenedores claros */
+
+  /* 🧠 Texto */
+  --color-text-primary: #2F3136;   /* Texto principal */
+  --color-text-inverse: #FFFFFF;   /* Texto sobre fondos oscuros */
+  --color-text-muted: #9E9E9E;     /* Texto secundario */
+
+  /* 🌊 Identidad */
+  --color-brand-primary: #005F6B;  /* Azul petróleo (confianza, tecnología) */
+  --color-brand-secondary: #0B4F6C;
+
+  /* 🔥 Acentos / Acción */
+  --color-accent-pink: #FF1F8A;    /* Llamadas premium / detalles */
+  --color-accent-green: #C6FF5E;   /* Acciones positivas */
+  --color-accent-orange: #FBA92C;  /* Botones principales */
+
+  /* 🧩 UI */
+  --color-border: #D0D0D0;
+  --color-hover: #0B4F6C;
+  --color-active: #07404F;
+
+  /* 🌈 Gradientes */
+  --gradient-thermal: linear-gradient(
+    135deg,
+    #1A1B26,
+    #005F6B,
+    #0B4F6C
+  );
+}
+
+/* ============================= */
+/* Links y Botones */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover,
+button:hover {
+  color: var(--color-hover);
+}
+
+a:active,
+button:active {
+  color: var(--color-active);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* TOP BAR */
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px 16px;
+  font-size: 14px;
+}
+
+.top-bar.dark {
+  background: var(--color-bg-dark);
+  color: var(--color-text-inverse);
+}
+
+.top-bar.light {
+  background: var(--color-bg-light);
+  color: var(--color-text-primary);
+}
+.header-wrapper {
+  background: var(--gradient-thermal);
+  display: grid;
+  grid-template-columns: minmax(auto, 1280px);
+  justify-content: center;
+  padding: 0 2.2%;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 110px;
+}
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--color-text-inverse);
+}
+.search-bar {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-inverse);
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--color-accent-pink);
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 12px;
+}
+.category-menu {
+  background: var(--color-bg-light);
+  border-top: 1px solid var(--color-border);
+}
+.desktop-only {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .header-inner {
+    justify-content: space-between;
+  }
+}
+
+
+/*footer*/
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+}

@@ -1,0 +1,87 @@
+.register-container {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+}
+
+.register-box {
+  width: 320px;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.register-box h2 {
+  margin-bottom: 15px;
+}
+
+.register-box input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field span {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-rules {
+  text-align: left;
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.password-rules li {
+  list-style: none;
+  margin-bottom: 4px;
+}
+
+.ok {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+.register-box button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2f6fed;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.register-box button:hover {
+  background-color: #255bd4;
+}
+
+.login-link {
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.login-link a {
+  color: #2f6fed;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 12px;
+}
