@@ -1,28 +1,31 @@
 // modules/users/users.service.js
+import bcrypt from "bcrypt";
+import * as usersModel from "./users.model.js";
 
-import * as UserModel from "./users.model.js";
-
-export const listarUsuarios = async () => {
-  return UserModel.findAll();
-};
-
-export const obtenerUsuario = async (id) => {
-  const user = await UserModel.findById(id);
-
-  if (!user) {
-    throw new Error("Usuario no encontrado");
+// Registro público (Buyer)
+export const createBuyer = async (data) => {
+  if (!data.password) {
+    throw new Error("Password es requerido");
   }
 
-  return user;
+  const passwordHash = await bcrypt.hash(data.password, 10);
+
+  return usersModel.create({
+    email: data.email,
+    password_hash: passwordHash, // 👈 SE MAPEA BIEN
+    nombres: data.nombres,
+    apellido: data.apellido,
+    telefono: data.telefono,
+    role: "buyer"
+  });
 };
 
-export const actualizarPerfil = async (id, data) => {
-  delete data.rol;      // nunca permitir cambiar rol
-  delete data.active;   // ni estado
+// Admin crea usuarios
+export const createByAdmin = async (data) => {
+  const passwordHash = await bcrypt.hash(data.password, 10);
 
-  return UserModel.updateById(id, data);
-};
-
-export const cambiarEstadoUsuario = async (id, active) => {
-  return UserModel.updateById(id, { active });
+  return usersModel.create({
+    ...data,
+    password_hash: passwordHash
+  });
 };

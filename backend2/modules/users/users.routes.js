@@ -2,6 +2,8 @@
 
 import express from "express";
 import {
+  registerUser,       // buyer público
+  createUserByAdmin,  // 👈 NUEVO
   getUsuarios,
   getUsuario,
   updateMe,
@@ -13,6 +15,17 @@ import { validarToken } from "../../middlewares/validarToken.js";
 import { autorizar } from "../../middlewares/autorizar.js";
 
 const router = express.Router();
+
+// 🟢 Registro público (Buyer)
+router.post("/", registerUser);
+
+// 🔐 Admin crea usuarios
+router.post(
+  "/admin",
+  validarToken,
+  autorizar(["admin"]),
+  createUserByAdmin
+);
 
 // Admin
 router.get("/", validarToken, autorizar(["admin"]), getUsuarios);

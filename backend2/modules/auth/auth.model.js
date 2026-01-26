@@ -1,11 +1,15 @@
 // modules/auth/auth.model.js
+import db from "../../config/database.js";
 
 export const findUserByEmail = async (email) => {
-  // EJEMPLO SQL / ORM
-  return db.query(
-    "SELECT id, email, password, rol, active FROM users WHERE email = ?",
+  const { rows } = await db.query(
+    `SELECT user_id, email, password_hash, role
+     FROM users
+     WHERE email = $1 AND is_active = true`,
     [email]
   );
+
+  return rows[0];
 };
 
 export const findUserById = async (id) => {
