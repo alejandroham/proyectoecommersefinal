@@ -1,7 +1,9 @@
-export const autorizar = (rolesPermitidos) => {
+export const autorizar = (roles = []) => {
   return (req, res, next) => {
-    if (!rolesPermitidos.includes(req.usuario.rol)) {
-      return res.status(403).json({ message: "Acceso denegado" });
+    if (!req.usuario || !roles.includes(req.usuario.role)) {
+      return res.status(403).json({
+        message: "Acceso denegado"
+      });
     }
     next();
   };

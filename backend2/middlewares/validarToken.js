@@ -1,5 +1,3 @@
-// middlewares/validarToken.js
-
 import jwt from "jsonwebtoken";
 
 export const validarToken = (req, res, next) => {
@@ -13,9 +11,9 @@ export const validarToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = decoded;
+    req.usuario = decoded; // 👈 CLAVE
     next();
   } catch (error) {
-    res.status(401).json({ message: "Token inválido" });
+    return res.status(401).json({ message: "Token inválido" });
   }
 };
