@@ -1,6 +1,6 @@
 import "dotenv/config";
 import bcrypt from "bcrypt";
-import pool from "./config/database.js";
+import { pool } from "./config/database.js";
 
 const crearAdmin = async () => {
   try {
