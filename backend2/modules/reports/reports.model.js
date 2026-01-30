@@ -1,4 +1,5 @@
-import pool from "../../config/database.js";
+// modules/reports/reports.model.js
+import { pool } from "../../config/database.js";
 
 export const ReportsModel = {
 
@@ -13,7 +14,7 @@ export const ReportsModel = {
 
   montoTotalVendido: async () => {
     const { rows } = await pool.query(
-      `SELECT COALESCE(SUM(total),0) AS total
+      `SELECT COALESCE(SUM(total), 0) AS total
        FROM orders
        WHERE status IN ('PAGADA','ENVIADA','COMPLETADA')`
     );
@@ -22,14 +23,14 @@ export const ReportsModel = {
 
   productosMasVendidos: async () => {
     const { rows } = await pool.query(
-      `SELECT p.product_id,
+      `SELECT p.id,
               p.nombre,
               SUM(oi.qty)::int AS vendidos
        FROM order_items oi
-       JOIN orders o ON o.orden_id = oi.order_id
-       JOIN products p ON p.product_id = oi.product_id
+       JOIN orders o ON o.id = oi.order_id
+       JOIN products p ON p.id = oi.product_id
        WHERE o.status IN ('PAGADA','ENVIADA','COMPLETADA')
-       GROUP BY p.product_id, p.nombre
+       GROUP BY p.id, p.nombre
        ORDER BY vendidos DESC
        LIMIT 5`
     );

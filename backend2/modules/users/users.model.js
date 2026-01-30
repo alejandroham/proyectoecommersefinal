@@ -1,12 +1,12 @@
 // modules/users/users.model.js
-import db from "../../config/database.js";
+import { pool } from "../../config/database.js";
 
 export const create = async (data) => {
-  const { rows } = await db.query(
+  const { rows } = await pool.query(
     `INSERT INTO users
      (email, password_hash, nombres, apellido, telefono, role)
      VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING user_id, email, role, is_active`,
+     RETURNING id, email, role`,
     [
       data.email,
       data.password_hash,
@@ -20,24 +20,39 @@ export const create = async (data) => {
   return rows[0];
 };
 
-
 export const findAll = async () => {
-  return db.query(
-    "SELECT id, email, rol, active, created_at FROM users"
+  const { rows } = await pool.query(
+    "SELECT id, email, role, created_at FROM users"
   );
+  return rows;
 };
 
 export const findById = async (id) => {
-  return db.query(
-    "SELECT id, email, rol, active FROM users WHERE id = ?",
+  const { rows } = await pool.query(
+    "SELECT id, email, role FROM users WHERE id = $1",
     [id]
   );
+  return rows[0];
 };
 
 export const updateById = async (id, data) => {
-  return db.query(
-    "UPDATE users SET ? WHERE id = ?",
-    [data, id]
+  const { rows } = await pool.query(
+    `UPDATE users
+     SET email = $1,
+         nombres = $2,
+         apellido = $3,
+         telefono = $4,
+         role = $5
+     WHERE id = $6
+     RETURNING id, email, role`,
+    [
+      data.email,
+      data.nombres,
+      data.apellido,
+      data.telefono ?? null,
+      data.role,
+      id
+    ]
   );
+  return rows[0];
 };
-

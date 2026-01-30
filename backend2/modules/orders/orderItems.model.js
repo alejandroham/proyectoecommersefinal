@@ -1,4 +1,5 @@
-import pool from "../../config/database.js";
+// modules/order_items/order_item.model.js
+import { pool } from "../../config/database.js";
 
 export const OrderItemsModel = {
 
@@ -6,7 +7,7 @@ export const OrderItemsModel = {
     const { rows } = await pool.query(
       `SELECT oi.*, p.nombre, p.image_url
        FROM order_items oi
-       JOIN products p ON p.product_id = oi.product_id
+       JOIN products p ON p.id = oi.product_id
        WHERE oi.order_id = $1`,
       [order_id]
     );
@@ -21,7 +22,7 @@ export const OrderItemsModel = {
        DO UPDATE SET
          qty = order_items.qty + 1,
          line_total = (order_items.qty + 1) * order_items.unit_price`,
-      [order_id, product.product_id, product.price]
+      [order_id, product.id, product.price]
     );
   },
 
@@ -30,7 +31,7 @@ export const OrderItemsModel = {
       `UPDATE order_items
        SET qty = $1,
            line_total = $1 * unit_price
-       WHERE order_item_id = $2`,
+       WHERE id = $2`,
       [qty, order_item_id]
     );
   },
@@ -38,14 +39,14 @@ export const OrderItemsModel = {
   removeItem: async (order_item_id) => {
     await pool.query(
       `DELETE FROM order_items
-       WHERE order_item_id = $1`,
+       WHERE id = $1`,
       [order_item_id]
     );
   },
 
   calcTotal: async (order_id) => {
     const { rows } = await pool.query(
-      `SELECT COALESCE(SUM(line_total),0) AS total
+      `SELECT COALESCE(SUM(line_total), 0) AS total
        FROM order_items
        WHERE order_id = $1`,
       [order_id]

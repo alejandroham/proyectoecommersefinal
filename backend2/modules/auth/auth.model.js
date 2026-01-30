@@ -1,11 +1,11 @@
 // modules/auth/auth.model.js
-import db from "../../config/database.js";
+import { pool } from "../../config/database.js";
 
 export const findUserByEmail = async (email) => {
-  const { rows } = await db.query(
-    `SELECT user_id, email, password_hash, role
+  const { rows } = await pool.query(
+    `SELECT id, email, password_hash, role
      FROM users
-     WHERE email = $1 AND is_active = true`,
+     WHERE email = $1`,
     [email]
   );
 
@@ -13,8 +13,10 @@ export const findUserByEmail = async (email) => {
 };
 
 export const findUserById = async (id) => {
-  return db.query(
-    "SELECT id, email, rol FROM users WHERE id = ?",
+  const { rows } = await pool.query(
+    "SELECT id, email, role FROM users WHERE id = $1",
     [id]
   );
+
+  return rows[0];
 };
