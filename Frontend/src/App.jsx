@@ -1,29 +1,54 @@
+// React Router
 import { Routes, Route } from "react-router-dom";
+
+// Layout
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+
+// Páginas públicas
+import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
-import Home from "./pages/home";
-import Products from './pages/products'
-import Cart from "./pages/Cart";
+import Products from "./pages/products";
+import ProductDetail from "./pages/productdetail";
+import Cart from "./pages/cart";
+
+// Páginas protegidas
 import CreateUser from "./pages/CreateUser";
+
+// Protección de rutas
 import PrivateRoute from "./components/PrivateRoute";
-import { CartProvider } from "./context/CartContext"; //Se importa context de carrito para uso global
+
+// Contexto global del carrito
+import { CartProvider } from "./context/CartContext";
+
+// Estilos globales
 import "./App.css";
 
 function App() {
   return (
-    <CartProvider> 
+    // 🔹 Proveedor global del carrito
+    // Todo lo que esté dentro puede usar useCart()
+    <CartProvider>
+
+      {/* HEADER visible en toda la app */}
       <Header />
 
+      {/* DEFINICIÓN DE RUTAS */}
       <Routes>
-        {/* RUTAS PÚBLICAS */}
-        <Route path="/" element={<Products />} />
+
+        {/* ===== RUTAS PÚBLICAS ===== */}
+        <Route path="/" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
 
-        {/* REGISTRO SOLO ADMIN */}
+        {/* Detalle de producto dinámico */}
+        <Route path="/product/:id" element={<ProductDetail />} />
+
+        {/* ===== RUTAS PROTEGIDAS ===== */}
+
+        {/* Solo ADMIN puede crear usuarios */}
         <Route
           path="/createUser"
           element={
@@ -33,7 +58,7 @@ function App() {
           }
         />
 
-        {/* PRODUCTOS (ADMIN / SALES / BUYER) */}
+        {/* Productos (admin / sales / buyer) */}
         <Route
           path="/products"
           element={
@@ -42,9 +67,13 @@ function App() {
             </PrivateRoute>
           }
         />
+
       </Routes>
+
+      {/* FOOTER visible en toda la app */}
       <Footer />
-      </CartProvider>   
+
+    </CartProvider>
   );
 }
 

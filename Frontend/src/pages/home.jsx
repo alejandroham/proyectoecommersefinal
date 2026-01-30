@@ -1,11 +1,17 @@
-import React from 'react'
+import Hero from "../components/Hero";
+import Products from "./products";
+import "../styles/hero.css";
 
-const home = () => {
+function Home() {
   return (
-    <div>
-      
-    </div>
-  )
+    <>
+      {/* Hero principal */}
+      <Hero />
+
+      {/* Listado de productos */}
+      <Products />
+    </>
+  );
 }
 
-export default home
+export default Home;

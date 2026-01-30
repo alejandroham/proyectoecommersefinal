@@ -1,47 +1,88 @@
-import products from "../data/products";
+/**
+ * Products.jsx
+ * - Vista principal del catálogo
+ * - Conecta con backend
+ * - Aplica filtros
+ * - Renderiza productos
+ */
+
+import { useEffect, useState } from "react";
+import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
-import Cart from "./cart";
 import "../styles/Products.css";
-import { useCart } from "../context/CartContext";
 
 
-//Se limpia código de products debido a que ya no maneja estados por acceso global al contexto de CartContext
-function Products(){
-  const { addToCart } = useCart();
+function Products() {
+
+  // Productos originales desde backend
+  const [products, setProducts] = useState([]);
+
+  // Productos filtrados
+  const [filtered, setFiltered] = useState([]);
+
+  // Estado de filtros
+  const [filters, setFilters] = useState({
+    price: "",
+    brand: "",
+    memory: "",
+    storage: ""
+  });
+
+  // ======================
+  // OBTENER PRODUCTOS
+  // ======================
+  useEffect(() => {
+    fetch("http://localhost:3000/products")
+      .then(res => res.json())
+      .then(data => {
+        setProducts(data);
+        setFiltered(data);
+      });
+  }, []);
+
+  // ======================
+  // APLICAR FILTROS
+  // ======================
+  useEffect(() => {
+    let result = [...products];
+
+    if (filters.brand)
+      result = result.filter(p => p.brand === filters.brand);
+
+    if (filters.memory)
+      result = result.filter(p => p.memory === filters.memory);
+
+    if (filters.storage)
+      result = result.filter(p => p.storage === filters.storage);
+
+    if (filters.price === "low")
+      result = result.filter(p => p.price < 500000);
+
+    if (filters.price === "mid")
+      result = result.filter(p => p.price >= 500000 && p.price <= 800000);
+
+    if (filters.price === "high")
+      result = result.filter(p => p.price > 800000);
+
+    setFiltered(result);
+  }, [filters, products]);
+
   return (
-    <div className="products-grid">
-  {products.map((product) => (
-    <div className="product-card" key={product.id}>
-      
-      {/* Favorito */}
-      <button className="fav-btn">♡</button>
+    <div className="products-layout">
 
-      {/* Imagen */}
-      <div className="product-image">
-        <img src={product.image} alt={product.name} />
-      </div>
+      {/* FILTROS LATERALES */}
+      <Filters filters={filters} setFilters={setFilters} />
 
-      {/* Info */}
-      <h4 className="product-title">{product.name}</h4>
-      <p className="product-attr">Atributos</p>
-
-      <div className="product-footer">
-        <span className="product-price">${product.price}</span>
-
-        <div className="product-actions">
-          <button
-            className="btn-add"
-            onClick={() => addToCart(product)}
-          >
-            Agregar
-          </button>
-          <button className="btn-buy">Comprar</button>
-        </div>
+      {/* GRID DE PRODUCTOS */}
+      <div className="products-grid">
+        {filtered.map(product => (
+          <ProductCard
+            key={product.id}
+            product={product}
+          />
+        ))}
       </div>
     </div>
-  ))}
-</div>
-
   );
 }
 

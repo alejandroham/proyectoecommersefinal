@@ -1,28 +1,47 @@
-import { useCart } from "../context/CartContext"; //se agrega import de carrito global.
+/**
+ * ProductCard.jsx
+ * - Representa UN producto
+ * - Se reutiliza en el grid
+ */
+
+import { Button } from "react-bootstrap";
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import "../styles/ProductsCard.css";
 
 
-//Se limpia ProductCard utilizando contexto global de carrito.
 function ProductCard({ product }) {
-    const { addToCart } = useCart();
-    const { name, price, description, image} = product;
 
-    return (
-        <div className="card">
-            <img src={image} alt={name} className="card-img"/>
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
-            <div className="card-body">
-                <h3>{name}</h3>
-                <p className="description">{description}</p>
-                <p className="price">${price}</p>
+  return (
+    <div className="product-card">
 
+      {/* Imagen */}
+      <img src={product.image} alt={product.name} />
 
-        <button onClick={() => addToCart(product)}>
-             Agregar al carrito
-        </button>   
-       </div>
-     </div>     
-    );
+      {/* Info */}
+      <h5>{product.name}</h5>
+      <p>${product.price}</p>
+
+      {/* Botones */}
+      <Button
+        size="sm"
+        onClick={() => addToCart({ ...product, quantity: 1 })}
+      >
+        Agregar
+      </Button>
+
+      <Button
+        size="sm"
+        variant="primary"
+        onClick={() => navigate(`/product/${product.id}`)}
+      >
+        Comprar
+      </Button>
+    </div>
+  );
 }
 
 export default ProductCard;
