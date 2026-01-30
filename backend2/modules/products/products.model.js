@@ -1,15 +1,16 @@
+// modules/products/products.model.js
 import { pool } from "../../config/database.js";
 
 export const findAllActive = async () => {
   const { rows } = await pool.query(
-    "SELECT * FROM products ORDER BY id"
+    "SELECT * FROM products ORDER BY product_id"
   );
   return rows;
 };
 
 export const findById = async (id) => {
   const { rows } = await pool.query(
-    "SELECT * FROM products WHERE id = $1",
+    "SELECT * FROM products WHERE product_id = $1",
     [id]
   );
   return rows[0];
@@ -42,7 +43,7 @@ export const update = async (id, data) => {
          price = $4,
          stock = $5,
          catego = $6
-     WHERE id = $7
+     WHERE product_id = $7
      RETURNING *`,
     [
       data.nombre,
