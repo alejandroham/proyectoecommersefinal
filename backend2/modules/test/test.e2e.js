@@ -4,23 +4,50 @@ import axios from "axios";
 const router = Router();
 
 /**
- * ⚠️ TEST E2E BACKEND
+ * TEST E2E BACKEND
  * Ruta: GET /modules/test
- * SOLO PARA DEV / QA
+ *
+ * - En producción está BLOQUEADO por defecto
+ * - Se habilita solo con ?force=true
+ * - Ejecuta el flujo REAL que hará el frontend
  */
 
+// ==========================================
+// CONFIGURACIÓN DE URL BASE
+// ==========================================
+// 👉 En Render define:
+// API_URL = https://proyectoecommersefinal.onrender.com
+//
+// 👉 En local define:
+// API_URL = http://localhost:3000
+//
+// Si NO existe la env, usa la URL pública (seguro para Render)
 const API_URL =
-  process.env.API_URL || "http://localhost:3000";
+  process.env.API_URL ||
+  "https://proyectoecommersefinal.onrender.com";
 
 router.get("/modules/test", async (req, res) => {
-  // Seguridad básica
-  if (process.env.NODE_ENV === "production") {
+  // ==========================================
+  // 🔒 PROTECCIÓN EN PRODUCCIÓN
+  // ==========================================
+  if (
+    process.env.NODE_ENV === "production" &&
+    req.query.force !== "true"
+  ) {
     return res.status(404).json({ message: "Not found" });
   }
 
   const report = [];
-  let buyerToken, adminToken, productId, cartItemId, orderId;
 
+  let buyerToken;
+  let adminToken;
+  let productId;
+  let cartItemId;
+  let orderId;
+
+  /**
+   * Ejecuta un paso y lo registra en el reporte
+   */
   const step = async (name, fn) => {
     try {
       await fn();
@@ -36,9 +63,9 @@ router.get("/modules/test", async (req, res) => {
   };
 
   try {
-    // ==========================
+    // ==========================================
     // BUYER
-    // ==========================
+    // ==========================================
     await step("Registro Buyer", async () => {
       await axios.post(`${API_URL}/users`, {
         name: "Buyer Test",
@@ -55,9 +82,9 @@ router.get("/modules/test", async (req, res) => {
       buyerToken = res.data.token;
     });
 
-    // ==========================
+    // ==========================================
     // ADMIN
-    // ==========================
+    // ==========================================
     await step("Login Admin", async () => {
       const res = await axios.post(`${API_URL}/auth/login`, {
         email: "admin@test.cl",
@@ -66,29 +93,36 @@ router.get("/modules/test", async (req, res) => {
       adminToken = res.data.token;
     });
 
-    // ==========================
+    // ==========================================
     // PRODUCTS
-    // ==========================
+    // ==========================================
     await step("Listar productos", async () => {
       const res = await axios.get(`${API_URL}/products`);
-      productId = res.data[0]?.id;
-      if (!productId) throw new Error("No hay productos disponibles");
+      productId = res.data?.[0]?.id;
+
+      if (!productId) {
+        throw new Error("No hay productos disponibles");
+      }
     });
 
-    // ==========================
+    // ==========================================
     // CART
-    // ==========================
+    // ==========================================
     await step("Agregar al carrito", async () => {
       const res = await axios.post(
         `${API_URL}/cart`,
-        { productId, qty: 2 },
+        {
+          productId,
+          qty: 2,
+        },
         {
           headers: {
             Authorization: `Bearer ${buyerToken}`,
           },
         }
       );
-      cartItemId = res.data.items?.[0]?.id;
+
+      cartItemId = res.data?.items?.[0]?.id;
     });
 
     await step("Checkout", async () => {
@@ -103,19 +137,27 @@ router.get("/modules/test", async (req, res) => {
       );
     });
 
-    // ==========================
+    // ==========================================
     // ORDERS
-    // ==========================
+    // ==========================================
     await step("Mis órdenes", async () => {
-      const res = await axios.get(`${API_URL}/orders/me`, {
-        headers: {
-          Authorization: `Bearer ${buyerToken}`,
-        },
-      });
-      orderId = res.data[0]?.id;
+      const res = await axios.get(
+        `${API_URL}/orders/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${buyerToken}`,
+          },
+        }
+      );
+
+      orderId = res.data?.[0]?.id;
     });
 
     await step("Actualizar estado orden (Admin)", async () => {
+      if (!orderId) {
+        throw new Error("No se encontró una orden para actualizar");
+      }
+
       await axios.put(
         `${API_URL}/orders/${orderId}/status`,
         { status: "PAID" },
@@ -127,20 +169,27 @@ router.get("/modules/test", async (req, res) => {
       );
     });
 
-    // ==========================
+    // ==========================================
     // DASHBOARD
-    // ==========================
+    // ==========================================
     await step("Dashboard Admin", async () => {
-      await axios.get(`${API_URL}/admin/dashboard`, {
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
-      });
+      await axios.get(
+        `${API_URL}/admin/dashboard`,
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
     });
 
+    // ==========================================
+    // RESULTADO FINAL
+    // ==========================================
     return res.status(200).json({
       ok: true,
       executedAt: new Date(),
+      apiUrlUsed: API_URL,
       results: report,
     });
 
@@ -148,6 +197,7 @@ router.get("/modules/test", async (req, res) => {
     return res.status(500).json({
       ok: false,
       executedAt: new Date(),
+      apiUrlUsed: API_URL,
       results: report,
     });
   }
