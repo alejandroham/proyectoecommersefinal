@@ -16,10 +16,10 @@ import { autorizar } from "../../middlewares/autorizar.js";
 
 const router = express.Router();
 
-// 🟢 Registro público (Buyer)
+//  Registro público (Buyer)
 router.post("/", registerUser);
 
-// 🔐 Admin crea usuarios
+//  Admin crea usuarios
 router.post(
   "/admin",
   validarToken,

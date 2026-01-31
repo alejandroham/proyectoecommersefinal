@@ -3,13 +3,10 @@ import assert from "node:assert";
 import request from "supertest";
 import app from "../app.js";
 
-describe("AUTH", () => {
+describe("ORDERS", () => {
 
-  test("Login incorrecto → 401", async () => {
-    const res = await request(app)
-      .post("/auth/login")
-      .send({ email: "no@existe.cl", password: "xxx" });
-
+  test("GET /orders sin token → 401", async () => {
+    const res = await request(app).get("/orders");
     assert.strictEqual(res.statusCode, 401);
   });
 

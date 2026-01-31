@@ -22,14 +22,14 @@ export const create = async (data) => {
 
 export const findAll = async () => {
   const { rows } = await pool.query(
-    "SELECT id, email, role, created_at FROM users"
+    "SELECT user_id, email, role, created_at FROM users"
   );
   return rows;
 };
 
 export const findById = async (id) => {
   const { rows } = await pool.query(
-    "SELECT id, email, role FROM users WHERE id = $1",
+    "SELECT user_id, email, role FROM users WHERE user_id = $1",
     [id]
   );
   return rows[0];
@@ -43,7 +43,7 @@ export const updateById = async (id, data) => {
          apellido = $3,
          telefono = $4,
          role = $5
-     WHERE id = $6
+     WHERE user_id = $6
      RETURNING id, email, role`,
     [
       data.email,

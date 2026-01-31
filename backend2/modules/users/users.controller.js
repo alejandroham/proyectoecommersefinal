@@ -28,13 +28,13 @@ export const disableUser = async (req, res) => {
   res.sendStatus(204);
 };
 
-// 🟢 Registro público (Buyer)
+// Registro público (Buyer)
 export const registerUser = async (req, res) => {
   try {
     const user = await usersService.createBuyer(req.body);
     res.status(201).json(user);
   } catch (error) {
-    console.error("❌ ERROR REGISTRO USER:", error);
+    console.error(" ERROR REGISTRO USER:", error);
     res.status(500).json({
       error: "Error al registrar usuario",
       detalle: error.message
@@ -42,7 +42,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// 🔐 Admin crea usuarios
+//  Admin crea usuarios
 export const createUserByAdmin = async (req, res) => {
   try {
     const { role } = req.body;
