@@ -6,30 +6,15 @@ const router = Router();
 /**
  * TEST E2E BACKEND
  * Ruta: GET /modules/test
- *
- * - En producción está BLOQUEADO por defecto
- * - Se habilita solo con ?force=true
- * - Ejecuta el flujo REAL que hará el frontend
+ * Compatible 100% con la BDD actual
  */
 
-// ==========================================
-// CONFIGURACIÓN DE URL BASE
-// ==========================================
-// 👉 En Render define:
-// API_URL = https://proyectoecommersefinal.onrender.com
-//
-// 👉 En local define:
-// API_URL = http://localhost:3000
-//
-// Si NO existe la env, usa la URL pública (seguro para Render)
 const API_URL =
   process.env.API_URL ||
   "https://proyectoecommersefinal.onrender.com";
 
 router.get("/modules/test", async (req, res) => {
-  // ==========================================
-  // 🔒 PROTECCIÓN EN PRODUCCIÓN
-  // ==========================================
+  // 🔒 Protección en producción
   if (
     process.env.NODE_ENV === "production" &&
     req.query.force !== "true"
@@ -42,12 +27,8 @@ router.get("/modules/test", async (req, res) => {
   let buyerToken;
   let adminToken;
   let productId;
-  let cartItemId;
   let orderId;
 
-  /**
-   * Ejecuta un paso y lo registra en el reporte
-   */
   const step = async (name, fn) => {
     try {
       await fn();
@@ -63,17 +44,23 @@ router.get("/modules/test", async (req, res) => {
   };
 
   try {
-    // ==========================================
-    // BUYER
-    // ==========================================
+    // ==========================
+    // REGISTRO BUYER
+    // ==========================
     await step("Registro Buyer", async () => {
       await axios.post(`${API_URL}/users`, {
-        name: "Buyer Test",
+        rut: "11111111-1",
         email: "buyer@test.cl",
         password: "123456",
+        nombres: "Buyer",
+        apellido: "Test",
+        telefono: "123456789",
       });
     });
 
+    // ==========================
+    // LOGIN BUYER
+    // ==========================
     await step("Login Buyer", async () => {
       const res = await axios.post(`${API_URL}/auth/login`, {
         email: "buyer@test.cl",
@@ -82,9 +69,9 @@ router.get("/modules/test", async (req, res) => {
       buyerToken = res.data.token;
     });
 
-    // ==========================================
-    // ADMIN
-    // ==========================================
+    // ==========================
+    // LOGIN ADMIN
+    // ==========================
     await step("Login Admin", async () => {
       const res = await axios.post(`${API_URL}/auth/login`, {
         email: "admin@test.cl",
@@ -93,23 +80,25 @@ router.get("/modules/test", async (req, res) => {
       adminToken = res.data.token;
     });
 
-    // ==========================================
+    // ==========================
     // PRODUCTS
-    // ==========================================
+    // ==========================
     await step("Listar productos", async () => {
       const res = await axios.get(`${API_URL}/products`);
-      productId = res.data?.[0]?.id;
+
+      // products.product_id
+      productId = res.data?.[0]?.product_id;
 
       if (!productId) {
         throw new Error("No hay productos disponibles");
       }
     });
 
-    // ==========================================
+    // ==========================
     // CART
-    // ==========================================
+    // ==========================
     await step("Agregar al carrito", async () => {
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/cart`,
         {
           productId,
@@ -121,8 +110,6 @@ router.get("/modules/test", async (req, res) => {
           },
         }
       );
-
-      cartItemId = res.data?.items?.[0]?.id;
     });
 
     await step("Checkout", async () => {
@@ -137,9 +124,9 @@ router.get("/modules/test", async (req, res) => {
       );
     });
 
-    // ==========================================
+    // ==========================
     // ORDERS
-    // ==========================================
+    // ==========================
     await step("Mis órdenes", async () => {
       const res = await axios.get(
         `${API_URL}/orders/me`,
@@ -150,17 +137,18 @@ router.get("/modules/test", async (req, res) => {
         }
       );
 
-      orderId = res.data?.[0]?.id;
+      // orders.orden_id
+      orderId = res.data?.[0]?.orden_id;
+
+      if (!orderId) {
+        throw new Error("No se encontró orden del buyer");
+      }
     });
 
     await step("Actualizar estado orden (Admin)", async () => {
-      if (!orderId) {
-        throw new Error("No se encontró una orden para actualizar");
-      }
-
       await axios.put(
         `${API_URL}/orders/${orderId}/status`,
-        { status: "PAID" },
+        { status: "PAGADA" },
         {
           headers: {
             Authorization: `Bearer ${adminToken}`,
@@ -169,9 +157,9 @@ router.get("/modules/test", async (req, res) => {
       );
     });
 
-    // ==========================================
+    // ==========================
     // DASHBOARD
-    // ==========================================
+    // ==========================
     await step("Dashboard Admin", async () => {
       await axios.get(
         `${API_URL}/admin/dashboard`,
@@ -183,9 +171,9 @@ router.get("/modules/test", async (req, res) => {
       );
     });
 
-    // ==========================================
+    // ==========================
     // RESULTADO FINAL
-    // ==========================================
+    // ==========================
     return res.status(200).json({
       ok: true,
       executedAt: new Date(),
