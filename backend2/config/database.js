@@ -1,15 +1,21 @@
-import pkg from "pg";
+import pkg from 'pg';
 const { Pool } = pkg;
-if (!process.env.PGPASSWORD) {
-  throw new Error("❌ PGPASSWORD NO está cargado");
-}
-const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: String(process.env.PGPASSWORD),
-  port: process.env.PGPORT,
+
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false
+  }
 });
 
-export default pool;
-
+// Test de conexión al iniciar
+export const connectDB = async () => {
+  try {
+    await pool.query('SELECT 1');
+    console.log('✅ Base de datos conectada');
+  } catch (error) {
+    console.error('❌ Error conectando a la BD:', error.message);
+    process.exit(1); // mata el proceso si no conecta
+  }
+};

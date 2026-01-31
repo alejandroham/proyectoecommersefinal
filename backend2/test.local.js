@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "./config/database.js";
+import { pool } from "./config/database.js";
 import { validarToken } from "./middlewares/validarToken.js";
 import { autorizar } from "./middlewares/autorizar.js";
 

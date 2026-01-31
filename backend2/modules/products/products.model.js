@@ -1,14 +1,15 @@
-import db from "../../config/database.js";
+// modules/products/products.model.js
+import { pool } from "../../config/database.js";
 
 export const findAllActive = async () => {
-  const { rows } = await db.query(
-    "SELECT * FROM products WHERE is_active = true"
+  const { rows } = await pool.query(
+    "SELECT * FROM products ORDER BY product_id"
   );
   return rows;
 };
 
 export const findById = async (id) => {
-  const { rows } = await db.query(
+  const { rows } = await pool.query(
     "SELECT * FROM products WHERE product_id = $1",
     [id]
   );
@@ -16,7 +17,7 @@ export const findById = async (id) => {
 };
 
 export const create = async (data) => {
-  const { rows } = await db.query(
+  const { rows } = await pool.query(
     `INSERT INTO products
      (nombre, descripcion, image_url, price, stock, catego)
      VALUES ($1, $2, $3, $4, $5, $6)
@@ -34,7 +35,7 @@ export const create = async (data) => {
 };
 
 export const update = async (id, data) => {
-  const { rows } = await db.query(
+  const { rows } = await pool.query(
     `UPDATE products
      SET nombre = $1,
          descripcion = $2,
