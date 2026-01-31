@@ -4,6 +4,8 @@ import productRoutes from "./modules/products/products.routes.js";
 import ordersRoutes from "./modules/orders/orders.routes.js";
 import reportsRoutes from "./modules/reports/reports.routes.js";
 import testLocalRoutes from "./test.local.js";
+import testE2ERoutes from "./modules/test/test.e2e.js";
+
 
 export const registerRoutes = (app) => {
   app.use("/auth", authRoutes);
@@ -12,4 +14,5 @@ export const registerRoutes = (app) => {
   app.use("/", ordersRoutes);
   app.use("/", reportsRoutes);
   app.use("/", testLocalRoutes);
+  app.use("/", testE2ERoutes);
 };
