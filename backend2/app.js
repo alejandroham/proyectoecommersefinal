@@ -3,7 +3,6 @@ import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { logger } from "./middlewares/logger.js";
 
-import cors from "cors";
 
 import cors from "cors";
 
