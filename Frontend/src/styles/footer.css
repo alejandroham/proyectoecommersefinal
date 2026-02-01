@@ -1,48 +1,53 @@
-/* ============================= */
-/* FOOTER GENERAL */
-/* ============================= */
+/* ===== FOOTER ===== */
 .footer {
-  background-color: #121212; /* Más elegante que bg-dark puro */
+  background: linear-gradient(135deg, #0b3c49, #041f24);
   color: #ffffff;
+  padding: 25px 10%;
+  margin-top: auto;
+}
+
+/* Contenedor */
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  align-items: center;
+  text-align: center;
+}
+
+/* Marca */
+.footer-brand h4 {
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+.footer-brand p {
   font-size: 0.9rem;
+  opacity: 0.85;
 }
 
-/* ============================= */
-/* TEXTO */
-/* ============================= */
-.footer p {
-  margin: 0;
-  line-height: 1.6;
+/* Links */
+.footer-links {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
 }
 
-/* ============================= */
-/* LINKS */
-/* ============================= */
-.footer a {
-  transition: color 0.3s ease;
+.footer-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  opacity: 0.85;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
-.footer a:hover {
-  color: #ffc107; /* Bootstrap warning */
-  text-decoration: underline;
+.footer-links a:hover {
+  opacity: 1;
+  transform: translateY(-2px);
 }
 
-/* ============================= */
-/* BORDE SUPERIOR */
-/* ============================= */
-.footer.border-warning {
-  border-top-width: 3px;
-}
-
-/* ============================= */
-/* RESPONSIVE */
-/* ============================= */
-@media (max-width: 576px) {
-  .footer {
-    font-size: 0.85rem;
-  }
-
-  .footer p {
-    margin-bottom: 6px;
-  }
+/* Copy */
+.footer-copy {
+  font-size: 0.8rem;
+  opacity: 0.75;
 }

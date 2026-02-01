@@ -64,3 +64,17 @@
 .product-card button {
   margin: 5px;
 }
+
+
+.products-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+  width: 100%;
+}

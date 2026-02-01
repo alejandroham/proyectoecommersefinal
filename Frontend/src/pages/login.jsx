@@ -1,62 +1,41 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import users from "../data/users.json";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/Login.css";
 
 function Login() {
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    // 1️⃣ Buscar usuario activo por email
-    const foundUser = users.find(
-      (u) => u.email === email && u.is_active === 1
-    );
-
-    if (!foundUser) {
-      alert("Usuario no encontrado o inactivo");
-      return;
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch  {
+      setError("Correo o contraseña incorrectos");
     }
-
-    // 2️⃣ Passwords simuladas por rol (mock)
-    const passwordMap = {
-      buyer: "buyer123",
-      admin: "admin123",
-      sales: "sales123",
-    };
-
-    if (password !== passwordMap[foundUser.role]) {
-      alert("Contraseña incorrecta");
-      return;
-    }
-
-    // 3️⃣ Guardar usuario en AuthContext
-    login({
-      user_id: foundUser.user_id,
-      nombres: foundUser.nombres,
-      apellido: foundUser.apellido,
-      email: foundUser.email,
-      role: foundUser.role,
-    });
-
-    // 4️⃣ Redirigir al home
-    navigate("/");
   };
 
   return (
-    <div className="login-container modal-mode">
-      <form className="login-box" onSubmit={handleSubmit}>
-        <h2>Bienvenido</h2>
+    <div className="login-page">
+      <form className="login-card" onSubmit={handleSubmit}>
+        <h2>Iniciar sesión</h2>
+        <p className="login-subtitle">
+          Accede a tu cuenta para continuar
+        </p>
+
+        {error && <div className="login-error">{error}</div>}
 
         <input
           type="email"
-          placeholder="Correo"
+          placeholder="Correo electrónico"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -70,12 +49,11 @@ function Login() {
           required
         />
 
-        <button type="submit">Continuar</button>
+        <button type="submit">Ingresar</button>
 
-        {/* 🔗 Enlace de registro */}
-        <p className="register-link">
+        <p className="login-footer">
           ¿No tienes cuenta?{" "}
-          <Link to="/registro">Regístrate aquí</Link>
+          <Link to="/register">Crear cuenta</Link>
         </p>
       </form>
     </div>

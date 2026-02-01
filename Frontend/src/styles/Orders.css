@@ -1,0 +1,39 @@
+.orders-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.order-card {
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.order-items {
+  border-top: 1px solid #334155;
+  border-bottom: 1px solid #334155;
+  padding: 10px 0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.order-total {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 18px;
+}
