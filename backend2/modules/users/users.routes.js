@@ -7,7 +7,7 @@ import {
   updateMe,
   enableUser,
   disableUser,
-  getME
+  getMe
 } from "./users.controller.js";
 
 import { validarToken } from "../../middlewares/validarToken.js";
