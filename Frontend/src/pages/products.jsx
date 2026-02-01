@@ -11,6 +11,7 @@ import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
 import "../styles/Products.css";
 import "../styles/Filters.css";
+import { getProducts } from "../services/api";
 
 
 function Products() {
@@ -32,11 +33,15 @@ function Products() {
   // ======================
   // OBTENER PRODUCTOS
   // ======================
-  useEffect(() => {
-  fetch("https://proyectoecommersefinal.onrender.com/products")
-    .then(res => res.json())
-    .then(data => {
-      const adaptedProducts = data.map(p => ({
+useEffect(() => {
+  const loadProducts = async () => {
+    try {
+      const response = await getProducts();
+
+      // 👇 AJUSTE CLAVE
+      const list = response.results ?? [];
+
+      const adaptedProducts = list.map(p => ({
         id: p.product_id,
         name: p.nombre,
         image: p.image_url,
@@ -47,9 +52,15 @@ function Products() {
 
       setProducts(adaptedProducts);
       setFiltered(adaptedProducts);
-    })
-    .catch(err => console.error("Error cargando productos", err));
+
+    } catch (error) {
+      console.error("Error cargando productos", error);
+    }
+  };
+
+  loadProducts();
 }, []);
+
 
   // ======================
   // APLICAR FILTROS
