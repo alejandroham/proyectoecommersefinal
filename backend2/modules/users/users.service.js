@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import * as usersModel from "./users.model.js";
 
-// Registro público (Buyer)
+/* Registro público (buyer) */
 export const createBuyer = async (data) => {
   if (!data.password) {
     throw new Error("Password es requerido");
@@ -19,33 +19,22 @@ export const createBuyer = async (data) => {
   });
 };
 
-// Admin crea usuarios
-export const createByAdmin = async (data) => {
-  const passwordHash = await bcrypt.hash(data.password, 10);
+/*Usuario edita SU perfil / No puede modificar role */
+export const actualizarMiPerfil = async (user_id, data) => {
+  // Blindaje total: aunque venga en el body
+  if ("role" in data) {
+    delete data.role;
+  }
 
-  return usersModel.create({
-    ...data,
-    password_hash: passwordHash
-  });
+  return usersModel.updateProfileByUser(user_id, data);
 };
 
-
-// Admin / Perfil
-
+/* Listar usuarios (admin o uso interno) */
 export const listarUsuarios = async () => {
   return usersModel.findAll();
 };
 
+/* Obtener usuario por ID */
 export const obtenerUsuario = async (user_id) => {
   return usersModel.findById(user_id);
-};
-
-export const actualizarPerfil = async (user_id, data) => {
-  return usersModel.updateById(user_id, data);
-};
-
-
-export const cambiarEstadoUsuario = async (user_id, activo) => {
-  // NO Activo.
-  return true;
 };

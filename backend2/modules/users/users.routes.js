@@ -1,40 +1,20 @@
-import express from "express";
+import { Router } from "express";
 import {
-  registerUser,
-  createUserByAdmin,
-  getUsuarios,
-  getUsuario,
-  updateMe,
-  enableUser,
-  disableUser
+  actualizarMiPerfilController,
+  listarUsuariosController,
+  obtenerUsuarioController
 } from "./users.controller.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { validarToken } from "../../middlewares/validarToken.js";
-import { autorizar } from "../../middlewares/autorizar.js";
+const router = Router();
 
-const router = express.Router();
+/*Usuario autenticado edita su perfil */
+router.put(  "/users/me",  authMiddleware,  actualizarMiPerfilController);
 
-// Registro público (Buyer)
-router.post("/", registerUser);
+/* Obtener usuario por ID */
+router.get(  "/users/:id",  authMiddleware,  obtenerUsuarioController);
 
-// Usuario autenticado
-router.put("/me", validarToken, updateMe);
-
-// Admin crea usuarios
-router.post(
-  "/admin",
-  validarToken,
-  autorizar(["admin"]),
-  createUserByAdmin
-);
-
-// Admin
-
-router.get("/", validarToken, autorizar(["admin"]), getUsuarios);
-
-//  RUTAS CON :id AL FINAL
-router.get("/:id", validarToken, autorizar(["admin"]), getUsuario);
-router.put("/:id/enable", validarToken, autorizar(["admin"]), enableUser);
-router.put("/:id/disable", validarToken, autorizar(["admin"]), disableUser);
+/* Listar usuarios */
+router.get(  "/users",  authMiddleware,  listarUsuariosController);
 
 export default router;

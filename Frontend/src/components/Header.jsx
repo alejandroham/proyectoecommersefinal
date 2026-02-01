@@ -1,11 +1,10 @@
 /**
  * Header.jsx
- * COMPORTAMIENTO GENERAL:
- * - El menú de categorías (productos) SIEMPRE es visible.
- * - Si NO hay usuario logueado:
- *    - Se muestra el menú buyer.
- *    - Se muestra el botón "Inicia sesión".
- *    - No se permite acceder a perfil, carrito ni historial.
+ * - Menú público si NO hay sesión
+ * - Menú buyer si buyer logueado
+ * - Menú admin si admin logueado
+ * - Nombre del usuario SIEMPRE visible cuando hay sesión
+ * - Rol admin visible solo para admin
  */
 
 import {
@@ -23,22 +22,24 @@ import {
 } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { MENUS } from "../data/menus";
 import { useCart } from "../context/CartContext";
+import { MENUS } from "../data/menus";
 import "../styles/Header.css";
 
 const Header = ({ theme, setTheme }) => {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+
   const cartCount = cart.length;
 
-  const role = user?.role || "buyer";
+  // 🔑 Rol efectivo
+  const role = user?.role || "public";
 
   return (
     <>
       {/* ================= TOP BAR ================= */}
       <div className={`top-bar ${theme}`}>
-        <span>¡Retira GRATIS tus compras en nuestra tienda!</span>
+        <span>¡Retira GRATIS tus compras en nuestra tienda! 🤙</span>
 
         <button
           className="theme-toggle"
@@ -51,105 +52,104 @@ const Header = ({ theme, setTheme }) => {
         </button>
       </div>
 
-      {/* ================= HEADER PRINCIPAL ================= */}
+      {/* ================= HEADER ================= */}
       <header className={`header-wrapper ${theme}`}>
         <div className="header-inner">
-          
+
           {/* LOGO */}
           <Link to="/" className="logo">
             Compumundo<strong>hipermegared!</strong> 🍩
           </Link>
 
-          {/* SEARCH (deshabilitado por ahora) */}
-          <Form className="search-bar desktop-only">
-            {/*
-            <FormControl
-              type="search"
-              placeholder="Busca los mejores productos y marcas :)"
-            />
-            */}
-          </Form>
+          {/* SEARCH (placeholder futuro) */}
+          <Form className="search-bar desktop-only" />
 
-          {/* ================= ACCIONES ================= */}
-          <Nav className="header-actions">
+          {/* ================= DERECHA ================= */}
+          <div className="header-right">
 
-            {/* CARRITO */}
-            {user && (
-              <Nav.Link
-                as={Link}
-                to="/cart"
-                className="header-action position-relative"
-                title="Ver carrito"
-              >
-                <Cart size={26} />
-                {cartCount > 0 && (
-                  <Badge pill bg="danger" className="cart-badge">
-                    {cartCount}
-                  </Badge>
-                )}
-              </Nav.Link>
-            )}
+            {/* ===== USUARIO LOGUEADO ===== */}
+            {user ? (
+              <>
+                {/* BUYER: carrito + pedidos */}
+                {role === "buyer" && (
+                  <>
+                    <Link
+                      to="/cart"
+                      className="header-action position-relative"
+                      title="Carrito"
+                    >
+                      <Cart size={24} />
+                      {cartCount > 0 && (
+                        <Badge pill bg="danger" className="cart-badge">
+                          {cartCount}
+                        </Badge>
+                      )}
+                    </Link>
 
-            {/* LOGIN / MI CUENTA */}
-            <Nav.Link
-              as={Link}
-              to={user ? "/profile" : "/login"}
-              className="header-action user-block"
-            >
-              <Person size={28} />
-
-              <div className="user-text desktop-only">
-                <small className="user-greeting">
-                  Hola{user && ","}
-                </small>
-
-                {user && (
-                  <span className="user-name">
-                    {user.nombres}
-                  </span>
+                    <Link
+                      to="/orders"
+                      className="header-action"
+                      title="Mis pedidos"
+                    >
+                      <ClockHistory size={22} />
+                    </Link>
+                  </>
                 )}
 
-                <strong className="account-text">
-                  {user ? "Mi cuenta" : "Inicia sesión"}
-                </strong>
-              </div>
-            </Nav.Link>
+                {/* INFO USUARIO */}
+                <Link to="/profile" className="header-action user-info">
+                  <Person size={26} />
+                  <div className="user-text">
+                    <span className="user-name">
+                      Hola, <strong>{user.nombres}</strong>
+                    </span>
 
-            {/* HISTORIAL DE PEDIDOS */}
-            {user && (
-              <Nav.Link
-                as={Link}
-                to="/orders"
-                className="header-action desktop-only"
-                title="Mis pedidos"
-              >
-                <ClockHistory size={22} />
-              </Nav.Link>
-            )}
+                    {role === "admin" && (
+                      <span className="user-role">
+                        Administrador
+                      </span>
+                    )}
+                  </div>
+                </Link>
 
-            {/* LOGOUT */}
-            {user && (
-              <button
-                className="logout-btn header-action"
-                onClick={() => {
-                  if (confirm("¿Deseas cerrar sesión?")) {
-                    logout();
-                  }
-                }}
-              >
-                <BoxArrowRight size={30} />
-                <span className="desktop-only">Salir</span>
-              </button>
+                {/* LOGOUT */}
+                <button
+                  className="logout-btn header-action"
+                  onClick={() => {
+                    if (confirm("¿Deseas cerrar sesión?")) {
+                      logout();
+                    }
+                  }}
+                >
+                  <BoxArrowRight size={26} />
+                  <span className="desktop-only">Salir</span>
+                </button>
+              </>
+            ) : (
+              /* ===== NO LOGUEADO ===== */
+              <>
+                <Link to="/login" className="header-action user-info">
+                  <Person size={26} />
+                  <div className="user-text">
+                    <span className="user-name">Hola</span>
+                    <strong>Inicia sesión</strong>
+                  </div>
+                </Link>
+
+                <Link to="/register" className="header-action">
+                  Crear cuenta
+                </Link>
+              </>
             )}
-          </Nav>
+          </div>
         </div>
       </header>
 
-      {/* ================= MENÚ DE CATEGORÍAS ================= */}
+      {/* ================= MENÚ ================= */}
       <Navbar className="category-menu navbar-expand-md">
         <Container fluid>
           <Nav className="w-100 justify-content-around text-center">
-            {MENUS[role].map((item, index) => (
+            {(MENUS[role] || MENUS.public).map((item, index) => (
               <Nav.Link
                 key={index}
                 as={Link}
@@ -158,8 +158,7 @@ const Header = ({ theme, setTheme }) => {
               >
                 {item.icon}
                 <span className="d-none d-md-inline">
-                  {" "}
-                  {item.label}
+                  {" "}{item.label}
                 </span>
               </Nav.Link>
             ))}

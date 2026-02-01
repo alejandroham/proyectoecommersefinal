@@ -1,6 +1,11 @@
-// modules/users/users.model.js
 import { pool } from "../../config/database.js";
 
+const DEFAULT_PROFILE_IMAGE =
+  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+
+/**
+ * Crear usuario
+ */
 export const create = async (data) => {
   const { rows } = await pool.query(
     `
@@ -8,7 +13,11 @@ export const create = async (data) => {
       (email, password_hash, nombres, apellido, telefono, role)
     VALUES
       ($1, $2, $3, $4, $5, $6)
-    RETURNING user_id, email, role
+    RETURNING
+      user_id,
+      email,
+      role,
+      COALESCE(profile_image, $7) AS profile_image
     `,
     [
       data.email,
@@ -16,29 +25,64 @@ export const create = async (data) => {
       data.nombres,
       data.apellido,
       data.telefono ?? null,
-      data.role
+      data.role,
+      DEFAULT_PROFILE_IMAGE
     ]
   );
 
   return rows[0];
 };
 
+/**
+ * Listar usuarios
+ */
 export const findAll = async () => {
   const { rows } = await pool.query(
-    "SELECT user_id, email, role, created_at FROM users"
+    `
+    SELECT
+      user_id,
+      email,
+      nombres,
+      apellido,
+      telefono,
+      role,
+      created_at,
+      COALESCE(profile_image, $1) AS profile_image
+    FROM users
+    `,
+    [DEFAULT_PROFILE_IMAGE]
   );
+
   return rows;
 };
 
+/**
+ * Obtener usuario por ID
+ */
 export const findById = async (user_id) => {
   const { rows } = await pool.query(
-    "SELECT user_id, email, role FROM users WHERE user_id = $1",
-    [user_id]
+    `
+    SELECT
+      user_id,
+      email,
+      nombres,
+      apellido,
+      telefono,
+      role,
+      COALESCE(profile_image, $1) AS profile_image
+    FROM users
+    WHERE user_id = $2
+    `,
+    [DEFAULT_PROFILE_IMAGE, user_id]
   );
+
   return rows[0];
 };
 
-export const updateById = async (user_id, data) => {
+/**
+ * Usuario actualiza su propio perfil (SIN rol)
+ */
+export const updateProfileByUser = async (user_id, data) => {
   const { rows } = await pool.query(
     `
     UPDATE users
@@ -46,17 +90,26 @@ export const updateById = async (user_id, data) => {
         nombres = $2,
         apellido = $3,
         telefono = $4,
-        role = $5
+        profile_image = $5,
+        updated_at = NOW()
     WHERE user_id = $6
-    RETURNING user_id, email, role
+    RETURNING
+      user_id,
+      email,
+      nombres,
+      apellido,
+      telefono,
+      role,
+      COALESCE(profile_image, $7) AS profile_image
     `,
     [
       data.email,
       data.nombres,
       data.apellido,
       data.telefono ?? null,
-      data.role,
-      user_id
+      data.profile_image ?? null,
+      user_id,
+      DEFAULT_PROFILE_IMAGE
     ]
   );
 

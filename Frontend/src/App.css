@@ -59,7 +59,7 @@ body {
 /* ============================= */
 :root {
   /* 🎨 Colores base */
-  --color-bg-main: #F4F4F1;        /* Fondo general (vainilla suave, descansa la vista) */
+  --color-bg-main: #1A1B26;        /* Fondo general (vainilla suave, descansa la vista) */
   --color-bg-dark: #1A1B26;        /* Fondos oscuros: header, footer */
   --color-bg-light: #FFFFFF;       /* Contenedores claros */
 
@@ -234,7 +234,7 @@ main {
 
 body.dark {
   background-color: #0f172a; /* azul oscuro elegante */
-  color: #e5e7eb;
+  color: #0f172a;
 }
 
 body.light {

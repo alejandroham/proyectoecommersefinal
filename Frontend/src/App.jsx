@@ -1,6 +1,6 @@
-// React Router
-import { Routes, Route } from "react-router-dom";
+// React
 import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
 // Layout
 import Header from "./components/Header";
@@ -19,48 +19,50 @@ import Orders from "./pages/orders";
 import CreateUser from "./pages/CreateUser";
 
 // Protección de rutas
+import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 
-// Contexto global del carrito
+// Contextos globales
 import { CartProvider } from "./context/CartContext";
 
 // Estilos globales
 import "./App.css";
 
 function App() {
-  // ===== TEMA GLOBAL (dark / light) =====
-const [theme, setTheme] = useState(
-  localStorage.getItem("theme") || "dark"
-);
+  // ==========================
+  // TEMA GLOBAL (dark / light)
+  // ==========================
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
-useEffect(() => {
-  document.body.classList.remove("dark", "light");
-  document.body.classList.add(theme);
-  localStorage.setItem("theme", theme);
-}, [theme]);
+  useEffect(() => {
+    document.body.classList.remove("dark", "light");
+    document.body.classList.add(theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
-    // 🔹 Proveedor global del carrito
     <CartProvider>
+      {/* HEADER */}
+      <Header theme={theme} setTheme={setTheme} />
 
-      {/* HEADER visible en toda la app */}
-      <Header theme={theme} setTheme={setTheme}/>
-      
       <main>
         <Routes>
-
-          {/* ===== RUTAS PÚBLICAS ===== */}
+          {/* ======================
+              RUTAS PÚBLICAS
+          ====================== */}
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Register />} />
           <Route path="/orders" element={<Orders />} />
 
-          {/* Detalle de producto dinámico */}
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>}/>
 
-          {/* ===== RUTAS PROTEGIDAS ===== */}
-
-          {/* Solo ADMIN puede crear usuarios */}
+          {/* ======================
+              RUTAS PROTEGIDAS
+          ====================== */}
           <Route
             path="/createUser"
             element={
@@ -69,16 +71,11 @@ useEffect(() => {
               </PrivateRoute>
             }
           />
-
-          {/* Productos (admin / sales / buyer) */}
-          <Route path="/products" element={<Products />} />
-
         </Routes>
       </main>
 
-      {/* FOOTER visible en toda la app */}
+      {/* FOOTER */}
       <Footer />
-
     </CartProvider>
   );
 }

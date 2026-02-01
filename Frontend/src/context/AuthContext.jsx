@@ -2,16 +2,17 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+const API_URL = import.meta.env.VITE_API_URL;
 
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // ==========================
-  // LOGIN REAL (JWT)
+  // LOGIN (JWT)
   // ==========================
   const login = async (email, password) => {
-    const res = await fetch("https://proyectoecommersefinal.onrender.com/auth/login", {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -26,63 +27,75 @@ export function AuthProvider({ children }) {
     const data = await res.json();
 
     localStorage.setItem("token", data.token);
-    
 
-    // 🔄 Cargamos usuario real
+    // cargar usuario real
     await loadUser();
 
     return data;
   };
 
-  // ==========================
-  // CARGAR USUARIO DESDE TOKEN
-  // ==========================
-  const loadUser = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
 
-    try {
-      const res = await fetch(
-        "https://proyectoecommersefinal.onrender.com/auth/me",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+  // CArga Información del usuario con el Token
 
-      if (!res.ok) throw new Error("No autorizado");
+ const loadUser = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    setLoading(false);
+    return;
+  }
 
-      const userData = await res.json();
-      setUser(userData);
-    } catch  {
-      localStorage.removeItem("token");
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/auth/me`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-  // ==========================
+    if (!res.ok) throw new Error("No autorizado");
+
+    const data = await res.json();
+
+    // NORMALIZAMOS EL USUARIO AQUÍ
+    setUser({
+      id: data.user_id,
+      email: data.email,
+      role: data.role,
+      nombres: data.nombres || data.email.split("@")[0],
+    });
+
+  } catch {
+    localStorage.removeItem("token");
+    setUser(null);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   // LOGOUT
-  // ==========================
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
-  // ==========================
   // AUTO LOGIN AL RECARGAR
-  // ==========================
+
   useEffect(() => {
     loadUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        loading
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

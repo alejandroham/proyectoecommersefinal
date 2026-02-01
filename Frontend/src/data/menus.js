@@ -1,21 +1,17 @@
+// src/data/menus.js
 export const MENUS = {
+  public: [
+    { label: "Gaming", icon: "🎮", path: "/products?cat=gaming" },
+    { label: "Computación", icon: "💻", path: "/products?cat=computacion" },
+    { label: "Componentes", icon: "🧩", path: "/products?cat=componentes" },
+    { label: "Redes", icon: "📡", path: "/products?cat=redes" },
+    { label: "Hogar", icon: "🏠", path: "/products?cat=hogar" },
+  ],
+
   admin: [
+    { label: "Productos", icon: "📦", path: "/productos" },
     { label: "Stock", icon: "📦", path: "/products" },
     { label: "Usuarios", icon: "👤", path: "/createUser" },
-    { label: "Ventas", icon: "💰", path: "/sales" },
-    { label: "Equipos", icon: "🖥️", path: "/equipos" },
-  ],
-
-  sales: [
-    { label: "Stock", icon: "📦", path: "/products" },
-    { label: "Ventas", icon: "💰", path: "/sales" },
-  ],
-
-  buyer: [
-    { label: "Gaming", icon: "🎮", path: "/" },
-    { label: "Computación", icon: "💻", path: "/" },
-    { label: "Componentes", icon: "🧩", path: "/" },
-    { label: "Redes", icon: "📡", path: "/" },
-    { label: "Hogar", icon: "🏠", path: "/" },
+    { label: "Dasboard", icon: "💰", path: "/dashboard" },
   ],
 };

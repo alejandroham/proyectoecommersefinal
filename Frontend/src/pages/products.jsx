@@ -1,7 +1,7 @@
 /**
  * Products.jsx
  * - Vista principal del catálogo
- * - Conecta con backend
+ * - Conecta con backend (Render / Local vía ENV)
  * - Aplica filtros
  * - Renderiza productos
  */
@@ -11,11 +11,10 @@ import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
 import "../styles/Products.css";
 import "../styles/Filters.css";
-import { getProducts } from "../services/api";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Products() {
-
   // Productos originales desde backend
   const [products, setProducts] = useState([]);
 
@@ -33,34 +32,44 @@ function Products() {
   // ======================
   // OBTENER PRODUCTOS
   // ======================
-useEffect(() => {
-  const loadProducts = async () => {
-    try {
-      const response = await getProducts();
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const res = await fetch(`${API_URL}/products`);
 
-      // 👇 AJUSTE CLAVE
-      const list = response.results ?? [];
+        if (!res.ok) {
+          throw new Error("Error al obtener productos");
+        }
 
-      const adaptedProducts = list.map(p => ({
-        id: p.product_id,
-        name: p.nombre,
-        image: p.image_url,
-        price: Number(p.price),
-        stock: p.stock,
-        category: p.catego
-      }));
+        const data = await res.json();
 
-      setProducts(adaptedProducts);
-      setFiltered(adaptedProducts);
+        // 🛡️ Protección por si el backend cambia el formato
+        const list = Array.isArray(data) ? data : data.products;
 
-    } catch (error) {
-      console.error("Error cargando productos", error);
-    }
-  };
+        if (!Array.isArray(list)) {
+          console.error("Formato inesperado de productos:", data);
+          return;
+        }
 
-  loadProducts();
-}, []);
+        // Adaptamos al formato del frontend
+        const adaptedProducts = list.map(p => ({
+          id: p.product_id,
+          name: p.nombre,
+          image: p.image_url,
+          price: Number(p.price),
+          stock: p.stock,
+          category: p.catego
+        }));
 
+        setProducts(adaptedProducts);
+        setFiltered(adaptedProducts);
+      } catch (error) {
+        console.error("Error cargando productos:", error);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   // ======================
   // APLICAR FILTROS
@@ -81,7 +90,9 @@ useEffect(() => {
       result = result.filter(p => p.price < 500000);
 
     if (filters.price === "mid")
-      result = result.filter(p => p.price >= 500000 && p.price <= 800000);
+      result = result.filter(
+        p => p.price >= 500000 && p.price <= 800000
+      );
 
     if (filters.price === "high")
       result = result.filter(p => p.price > 800000);
@@ -91,7 +102,6 @@ useEffect(() => {
 
   return (
     <div className="products-layout">
-
       {/* FILTROS LATERALES */}
       <Filters filters={filters} setFilters={setFilters} />
 

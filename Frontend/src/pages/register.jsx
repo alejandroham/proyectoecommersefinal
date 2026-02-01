@@ -1,106 +1,125 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import "../styles/Register.css";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/Login.css";
 
-const Register = () => {
-  // Estados para los inputs
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const API_URL = import.meta.env.VITE_API_URL;
 
-  // Controla mostrar/ocultar contraseña
-  const [showPassword, setShowPassword] = useState(false);
+function Register() {
+  const navigate = useNavigate();
 
-  // reglas de validación de contraseña
-  const passwordRules = {
-    length: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /\d/.test(password),
-    special: /[@$!%*?&#]/.test(password),
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    nombres: "",
+    apellido: "",
+    telefono: ""
+  });
+
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
   };
 
-  // Envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
-    // Verificamos que todas las reglas se cumplan
-    const isValid = Object.values(passwordRules).every(Boolean);
+    try {
+      const res = await fetch(`${API_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
 
-    if (!isValid) {
-      alert("La contraseña no cumple con los requisitos");
-      return;
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Error al registrar usuario");
+      }
+
+      setSuccess("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
+
+      // Redirige al login después de 1.5s
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+
+    } catch (err) {
+      setError(err.message);
     }
-
-    // Aquí enviarías los datos al backend
-    console.log("Email:", email);
-    console.log("Password:", password);
-
-    alert("Cuenta creada con éxito (demo)");
   };
 
   return (
-    <div className="register-container">
-      {/* Caja del registro */}
-      <form className="register-box" onSubmit={handleSubmit}>
-        <h2>Crea tu Cuenta</h2>
+    <div className="login-page">
+      <form className="login-card" onSubmit={handleSubmit}>
+        <h2>Crear cuenta</h2>
+        <p className="login-subtitle">
+          Regístrate para comenzar a comprar
+        </p>
 
-        {/* Email */}
+        {error && <div className="login-error">{error}</div>}
+        {success && <div className="login-success">{success}</div>}
+
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          name="nombres"
+          placeholder="Nombres"
+          value={form.nombres}
+          onChange={handleChange}
           required
         />
 
-        {/* Password */}
-        <div className="password-field">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <span onClick={() => setShowPassword(!showPassword)}>
-            👁️
-          </span>
-        </div>
+        <input
+          type="text"
+          name="apellido"
+          placeholder="Apellido"
+          value={form.apellido}
+          onChange={handleChange}
+          required
+        />
 
-        {/* Reglas */}
-        <ul className="password-rules">
-          <li className={passwordRules.length ? "ok" : "error"}>
-            Al menos 8 caracteres
-          </li>
-          <li className={passwordRules.upper ? "ok" : "error"}>
-            Una mayúscula
-          </li>
-          <li className={passwordRules.lower ? "ok" : "error"}>
-            Una minúscula
-          </li>
-          <li className={passwordRules.number ? "ok" : "error"}>
-            Un número
-          </li>
-          <li className={passwordRules.special ? "ok" : "error"}>
-            Un carácter especial
-          </li>
-        </ul>
+        <input
+          type="email"
+          name="email"
+          placeholder="Correo electrónico"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
 
-        {/* Botón */}
-        <button type="submit">Crear Cuenta</button>
+        <input
+          type="password"
+          name="password"
+          placeholder="Contraseña"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
 
-        {/* Link login */}
-        <p className="login-link">
-          Si ya tienes tu cuenta <Link to="/login">Login</Link>
+        <input
+          type="text"
+          name="telefono"
+          placeholder="Teléfono (opcional)"
+          value={form.telefono}
+          onChange={handleChange}
+        />
+
+        <button type="submit">Crear cuenta</button>
+
+        <p className="login-footer">
+          ¿Ya tienes cuenta?{" "}
+          <Link to="/login">Inicia sesión</Link>
         </p>
       </form>
-
-      {/* Footer */}
-      <footer>
-       {/*} <a href="#">Terms of Use</a> | <a href="#">Privacy</a>*/}
-      </footer>
     </div>
   );
-};
+}
 
 export default Register;

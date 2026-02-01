@@ -1,0 +1,48 @@
+.profile-page {
+  min-height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-card {
+  background: var(--card-bg, #fff);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.profile-card h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.profile-row span {
+  color: #777;
+}
+
+.role.admin {
+  color: #c0392b;
+}
+
+.role.buyer {
+  color: #2980b9;
+}
+
+.profile-edit-btn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  background: #ccc;
+  cursor: not-allowed;
+}

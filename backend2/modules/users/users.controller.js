@@ -1,60 +1,44 @@
-// modules/users/users.controller.js
-
 import * as usersService from "./users.service.js";
 
-// Admin
-export const getUsuarios = async (req, res) => {
-  const usuarios = await usersService.listarUsuarios();
-  res.json(usuarios);
-};
-
-export const getUsuario = async (req, res) => {
-  const usuario = await usersService.obtenerUsuario(req.params.id);
-  res.json(usuario);
-};
-
-export const updateMe = async (req, res) => {
-  await usersService.actualizarPerfil(req.usuario.id, req.body);
-  res.sendStatus(204);
-};
-
-export const enableUser = async (req, res) => {
-  await usersService.cambiarEstadoUsuario(req.params.id, true);
-  res.sendStatus(204);
-};
-
-export const disableUser = async (req, res) => {
-  await usersService.cambiarEstadoUsuario(req.params.id, false);
-  res.sendStatus(204);
-};
-
-// Registro público (Buyer)
-export const registerUser = async (req, res) => {
+/* Usuario actualiza su perfil */
+export const actualizarMiPerfilController = async (req, res) => {
   try {
-    const user = await usersService.createBuyer(req.body);
-    res.status(201).json(user);
+    const user_id = req.user.user_id; // viene del JWT
+
+    const user = await usersService.actualizarMiPerfil(
+      user_id,
+      req.body
+    );
+
+    res.json(user);
   } catch (error) {
-    console.error(" ERROR REGISTRO USER:", error);
-    res.status(500).json({
-      error: "Error al registrar usuario",
-      detalle: error.message
+    res.status(400).json({
+      error: error.message || "Error al actualizar perfil"
     });
   }
 };
 
-//  Admin crea usuarios
-export const createUserByAdmin = async (req, res) => {
+/*Listar usuarios */
+export const listarUsuariosController = async (req, res) => {
   try {
-    const { role } = req.body;
+    const users = await usersService.listarUsuarios();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Error al listar usuarios" });
+  }
+};
 
-    if (!role) {
-      return res.status(400).json({ error: "Role es requerido" });
+/* Obtener usuario por ID */
+export const obtenerUsuarioController = async (req, res) => {
+  try {
+    const user = await usersService.obtenerUsuario(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    const user = await usersService.createByAdmin(req.body);
-    res.status(201).json(user);
+    res.json(user);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al crear usuario" });
+    res.status(500).json({ error: "Error al obtener usuario" });
   }
 };
