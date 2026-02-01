@@ -3,7 +3,7 @@ import { pool } from "../../config/database.js";
 
 export const findUserByEmail = async (email) => {
   const { rows } = await pool.query(
-    `SELECT id, email, password_hash, role
+    `SELECT user_id, email, password_hash, role
      FROM users
      WHERE email = $1`,
     [email]
@@ -12,10 +12,12 @@ export const findUserByEmail = async (email) => {
   return rows[0];
 };
 
-export const findUserById = async (id) => {
+export const findUserById = async (user_id) => {
   const { rows } = await pool.query(
-    "SELECT id, email, role FROM users WHERE id = $1",
-    [id]
+    `SELECT user_id, email, role
+     FROM users
+     WHERE user_id = $1`,
+    [user_id]
   );
 
   return rows[0];

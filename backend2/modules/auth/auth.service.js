@@ -4,35 +4,37 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const login = async (email, password) => {
-  // 1️⃣ Buscar usuario
+  // Buscar usuario
   const user = await AuthModel.findUserByEmail(email);
 
   if (!user) {
     throw new Error("Usuario no válido");
   }
 
-  // 2️⃣ Comparar password
+  // Comparar password
   const isValid = await bcrypt.compare(password, user.password_hash);
 
   if (!isValid) {
     throw new Error("Usuario no válido");
   }
 
-  // 3️⃣ Generar token
-  const token = jwt.sign(
-    {
-      id: user.user_id,
-      role: user.role,
-      email: user.email
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  // Generar token 
+// modules/auth/auth.service.js
 
-  // 4️⃣ Retornar
+const token = jwt.sign(
+  {
+    user_id: user.user_id,  
+    role: user.role,
+    email: user.email
+  },
+  process.env.JWT_SECRET,
+  { expiresIn: "1h" }
+);
+
+  // Retornar token
   return { token };
 };
 
-export const getMe = async (id) => {
-  return AuthModel.findUserById(id);
+export const getMe = async (user_id) => {
+  return AuthModel.findUserById(user_id);
 };

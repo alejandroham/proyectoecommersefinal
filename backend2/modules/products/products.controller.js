@@ -11,8 +11,12 @@ export const getProduct = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
-  await ProductService.crearProducto(req.body, req.usuario);
-  res.sendStatus(201);
+  try {
+    const product = await ProductService.crearProducto(req.body);
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 export const updateProduct = async (req, res) => {

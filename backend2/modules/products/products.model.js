@@ -18,10 +18,13 @@ export const findById = async (id) => {
 
 export const create = async (data) => {
   const { rows } = await pool.query(
-    `INSERT INTO products
-     (nombre, descripcion, image_url, price, stock, catego)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING *`,
+    `
+    INSERT INTO products
+      (nombre, descripcion, image_url, price, stock, catego)
+    VALUES
+      ($1, $2, $3, $4, $5, $6)
+    RETURNING product_id, nombre, price, catego
+    `,
     [
       data.nombre,
       data.descripcion,
@@ -31,6 +34,7 @@ export const create = async (data) => {
       data.catego
     ]
   );
+
   return rows[0];
 };
 

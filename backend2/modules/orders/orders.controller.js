@@ -1,13 +1,17 @@
+// orders.controller.js
 import * as OrdersService from "./orders.service.js";
 
-export const getCart = async (req, res) => {
-  const cart = await OrdersService.getCart(req.usuario.id);
-  res.json(cart);
+export const addItem = async (req, res) => {
+  await OrdersService.addToCart(
+    req.usuario.user_id,  
+    req.body.product_id
+  );
+  res.sendStatus(201);
 };
 
-export const addItem = async (req, res) => {
-  await OrdersService.addToCart(req.usuario.id, req.body.product_id);
-  res.sendStatus(204);
+export const getCart = async (req, res) => {
+  const cart = await OrdersService.getCart(req.usuario.user_id); 
+  res.json(cart);
 };
 
 export const updateQty = async (req, res) => {
