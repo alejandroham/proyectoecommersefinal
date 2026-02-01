@@ -14,16 +14,14 @@ import { autorizar } from "../../middlewares/autorizar.js";
 
 const router = express.Router();
 
-// Registro público (Buyer)
+// Registro público
 router.post("/", registerUser);
 
-// Usuario autenticado edita SU perfil (sin rol)
+// Usuario autenticado
 router.put("/me", validarToken, updateMe);
 
-// Admin crea usuarios
-router.post(  "/admin",  validarToken,  autorizar(["admin"]),  createUserByAdmin);
-
-// Admin - gestión de usuarios
+// Admin
+router.post("/admin", validarToken, autorizar(["admin"]), createUserByAdmin);
 router.get("/", validarToken, autorizar(["admin"]), getUsuarios);
 router.get("/:id", validarToken, autorizar(["admin"]), getUsuario);
 router.put("/:id/enable", validarToken, autorizar(["admin"]), enableUser);
