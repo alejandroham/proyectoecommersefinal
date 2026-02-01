@@ -13,7 +13,7 @@ export const registerUser = async (req, res) => {
 /* Usuario edita SU perfil */
 export const updateMe = async (req, res) => {
   try {
-    const user_id = req.user.user_id;
+    const user_id = req.usuario.user_id; // 
 
     const user = await usersService.actualizarMiPerfil(
       user_id,
@@ -27,6 +27,7 @@ export const updateMe = async (req, res) => {
     });
   }
 };
+
 
 /* Admin: listar usuarios */
 export const getUsuarios = async (req, res) => {
@@ -71,4 +72,20 @@ export const enableUser = async (req, res) => {
 /* Admin deshabilita usuario */
 export const disableUser = async (req, res) => {
   res.json({ ok: true });
+};
+/*obtener el perfil me*/
+export const getMe = async (req, res) => {
+  try {
+    const user = await usersService.obtenerUsuario(
+      req.usuario.user_id
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error al obtener perfil" });
+  }
 };

@@ -17,8 +17,11 @@ const router = express.Router();
 // Registro público
 router.post("/", registerUser);
 
+
 // Usuario autenticado
+router.get("/me", validarToken, getMe);
 router.put("/me", validarToken, updateMe);
+
 
 // Admin
 router.post("/admin", validarToken, autorizar(["admin"]), createUserByAdmin);
