@@ -73,7 +73,8 @@ export const enableUser = async (req, res) => {
 export const disableUser = async (req, res) => {
   res.json({ ok: true });
 };
-/* Usuario autenticado: obtener mi perfil */
+
+// Obtener perfil del usuario autenticado
 export const getMe = async (req, res) => {
   try {
     const user_id = req.user.user_id;
@@ -81,11 +82,14 @@ export const getMe = async (req, res) => {
     const user = await usersService.obtenerUsuario(user_id);
 
     if (!user) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({
+        error: "Usuario no encontrado"
+      });
     }
 
     res.json(user);
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       error: "Error al obtener perfil"
     });
