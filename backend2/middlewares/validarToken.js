@@ -1,4 +1,3 @@
-// validarToken.js valida el token JWT en las solicitudes entrantes
 import jwt from "jsonwebtoken";
 
 export const validarToken = (req, res, next) => {
@@ -12,10 +11,12 @@ export const validarToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = decoded; 
+
+    // 🔑 ESTA ES LA CLAVE DEL PROYECTO
+    req.usuario = decoded;
+
     next();
   } catch (error) {
     return res.status(401).json({ message: "Token inválido" });
   }
 };
-

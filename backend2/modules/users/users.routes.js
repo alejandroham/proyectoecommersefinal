@@ -1,13 +1,13 @@
 import express from "express";
 import {
   registerUser,
+  getMe,
+  updateMe,
   createUserByAdmin,
   getUsuarios,
   getUsuario,
-  updateMe,
   enableUser,
-  disableUser,
-  getMe
+  disableUser
 } from "./users.controller.js";
 
 import { validarToken } from "../../middlewares/validarToken.js";
@@ -15,16 +15,14 @@ import { autorizar } from "../../middlewares/autorizar.js";
 
 const router = express.Router();
 
-// Registro público
+/* ===== REGISTRO PÚBLICO ===== */
 router.post("/", registerUser);
 
-
-// Usuario autenticado
+/* ===== USUARIO AUTENTICADO ===== */
 router.get("/me", validarToken, getMe);
 router.put("/me", validarToken, updateMe);
 
-
-// Admin
+/* ===== ADMIN ===== */
 router.post("/admin", validarToken, autorizar(["admin"]), createUserByAdmin);
 router.get("/", validarToken, autorizar(["admin"]), getUsuarios);
 router.get("/:id", validarToken, autorizar(["admin"]), getUsuario);
