@@ -1,70 +1,76 @@
-/* Contenedor principal */
-.login-container {
-  min-height: 50vh;
+.login-page {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0b4f6c, #040f16);
 }
 
-/* Caja del login */
-.login-box {
-  width: 300px;
-  padding: 25px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
   text-align: center;
 }
 
-/* Título */
-.login-box h2 {
+.login-card h2 {
+  margin-bottom: 6px;
+}
+
+.login-subtitle {
+  font-size: 14px;
+  color: #666;
   margin-bottom: 20px;
 }
 
-/* Inputs */
-.login-box input {
+.login-card input {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-}
-
-/* Texto pequeño */
-.help-text {
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-/* Botón */
-.login-box button {
-  width: 100%;
-  padding: 10px;
-  background-color: #2f6fed;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-/* Hover botón */
-.login-box button:hover {
-  background-color: #255bd4;
-}
-
-/* Registro */
-.register-text {
-  margin-top: 15px;
+  padding: 12px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   font-size: 14px;
 }
 
-.register-text span {
-  color: #2f6fed;
+.login-card input:focus {
+  outline: none;
+  border-color: #0b4f6c;
+}
+
+.login-card button {
+  width: 100%;
+  padding: 12px;
+  background: #0b4f6c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-/* Footer */
-footer {
-  margin-top: 20px;
-  font-size: 12px;
+.login-card button:hover {
+  background: #093b52;
+}
+
+.login-error {
+  background: #ffe5e5;
+  color: #b00020;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.login-footer {
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.login-footer a {
+  color: #0b4f6c;
+  font-weight: 600;
+  text-decoration: none;
 }

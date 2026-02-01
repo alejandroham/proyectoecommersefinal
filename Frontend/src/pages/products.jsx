@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
 import "../styles/Products.css";
+import "../styles/Filters.css";
 
 
 function Products() {
@@ -32,13 +33,23 @@ function Products() {
   // OBTENER PRODUCTOS
   // ======================
   useEffect(() => {
-    fetch("http://localhost:3000/products")
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-        setFiltered(data);
-      });
-  }, []);
+  fetch("https://proyectoecommersefinal.onrender.com/products")
+    .then(res => res.json())
+    .then(data => {
+      const adaptedProducts = data.map(p => ({
+        id: p.product_id,
+        name: p.nombre,
+        image: p.image_url,
+        price: Number(p.price),
+        stock: p.stock,
+        category: p.catego
+      }));
+
+      setProducts(adaptedProducts);
+      setFiltered(adaptedProducts);
+    })
+    .catch(err => console.error("Error cargando productos", err));
+}, []);
 
   // ======================
   // APLICAR FILTROS

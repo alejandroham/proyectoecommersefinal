@@ -1,75 +1,91 @@
-/**
- * AuthContext.jsx
- * ----------------------------------------------------------------------
- * Este archivo define el CONTEXTO DE AUTENTICACIÓN de la aplicación.
- * - Centralizar el estado del usuario autenticado.
- * - Permitir saber en cualquier parte de la app si el usuario:
- *    - Está logueado
- *    - Roles (admin, sales, buyer)
- * ESTRUCTURA GENERAL:
- *
- * - AuthContext:
- *   Contexto creado con createContext que almacenará:
- *     - user  → información del usuario autenticado
- *     - login → función para iniciar sesión
- *     - logout → función para cerrar sesión
- */
-
-
 import { createContext, useContext, useEffect, useState } from "react";
 
+const AuthContext = createContext();
 
-const AuthContext = createContext(null);
+export function AuthProvider({ children }) {
 
-
-export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  
-  
-  // Cargar usuario desde localStorage al refrescar
-  
-  useEffect(() => {
-  
-    const storedUser = localStorage.getItem("user");
-  
-    if (storedUser) {
-  
-      setUser(JSON.parse(storedUser));
-  
+  // ==========================
+  // LOGIN REAL (JWT)
+  // ==========================
+  const login = async (email, password) => {
+    const res = await fetch("https://proyectoecommersefinal.onrender.com/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!res.ok) {
+      throw new Error("Credenciales incorrectas");
     }
-  }, []);
 
-  
-  
-  // Login 
-  
-  const login = (userData) => {
-  
-    localStorage.setItem("user", JSON.stringify(userData));
-  
-    setUser(userData);
+    const data = await res.json();
+
+    localStorage.setItem("token", data.token);
+    
+
+    // 🔄 Cargamos usuario real
+    await loadUser();
+
+    return data;
   };
 
-  
-  
-  // Logout
-  
+  // ==========================
+  // CARGAR USUARIO DESDE TOKEN
+  // ==========================
+  const loadUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        "https://proyectoecommersefinal.onrender.com/auth/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!res.ok) throw new Error("No autorizado");
+
+      const userData = await res.json();
+      setUser(userData);
+    } catch  {
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==========================
+  // LOGOUT
+  // ==========================
   const logout = () => {
-  
-    localStorage.removeItem("user");
-  
+    localStorage.removeItem("token");
     setUser(null);
   };
 
-  
-  
+  // ==========================
+  // AUTO LOGIN AL RECARGAR
+  // ==========================
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-// Hook de acceso al contexto
 export const useAuth = () => useContext(AuthContext);

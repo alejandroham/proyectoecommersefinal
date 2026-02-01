@@ -6,17 +6,13 @@
  *    - Se muestra el menú buyer.
  *    - Se muestra el botón "Inicia sesión".
  *    - No se permite acceder a perfil, carrito ni historial.
- *
  */
 
-import { useState } from "react";
 import {
   Navbar,
   Nav,
   Container,
   Form,
-  FormControl,
-  Button,
   Badge,
 } from "react-bootstrap";
 import {
@@ -30,64 +26,54 @@ import { useAuth } from "../context/AuthContext";
 import { MENUS } from "../data/menus";
 import { useCart } from "../context/CartContext";
 import "../styles/Header.css";
-import { useEffect } from "react";
 
-
-const Header = () => {
+const Header = ({ theme, setTheme }) => {
   const { user, logout } = useAuth();
   const { cart } = useCart();
-  const cartCount = cart.length;    
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem("theme") !== "light"
-  );
-
-  useEffect(() => {
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-    document.body.classList.remove("light", "dark");
-    document.body.classList.add(darkMode ? "dark" : "light");
-  }, [darkMode]);
+  const cartCount = cart.length;
 
   const role = user?.role || "buyer";
 
   return (
     <>
-      {/* TOP BAR */}
-      <div className={`top-bar ${darkMode ? "dark" : "light"}`}>
+      {/* ================= TOP BAR ================= */}
+      <div className={`top-bar ${theme}`}>
         <span>¡Retira GRATIS tus compras en nuestra tienda!</span>
 
         <button
           className="theme-toggle"
-          onClick={() => setDarkMode(!darkMode)}
+          onClick={() =>
+            setTheme(theme === "dark" ? "light" : "dark")
+          }
+          title="Cambiar tema"
         >
-          {darkMode ? "☀️" : "🌙"}
+          {theme === "dark" ? "☀️" : "🌙"}
         </button>
       </div>
 
-      {/* HEADER PRINCIPAL */}
-      <header className={`header-wrapper ${darkMode ? "dark" : "light"}`}>
+      {/* ================= HEADER PRINCIPAL ================= */}
+      <header className={`header-wrapper ${theme}`}>
         <div className="header-inner">
+          
           {/* LOGO */}
           <Link to="/" className="logo">
-            Compumundo<strong>hipermegared! </strong> 🍩
+            Compumundo<strong>hipermegared!</strong> 🍩
           </Link>
 
-          {/* SEARCH (SE RESPETA TU COMENTARIO) */}
+          {/* SEARCH (deshabilitado por ahora) */}
           <Form className="search-bar desktop-only">
             {/*
             <FormControl
               type="search"
               placeholder="Busca los mejores productos y marcas :)"
             />
-            <Button variant="primary">
-              <Search />
-            </Button>
             */}
           </Form>
 
-          {/* ACTIONS */}
+          {/* ================= ACCIONES ================= */}
           <Nav className="header-actions">
 
-            {/* CARRITO*/}
+            {/* CARRITO */}
             {user && (
               <Nav.Link
                 as={Link}
@@ -106,41 +92,49 @@ const Header = () => {
 
             {/* LOGIN / MI CUENTA */}
             <Nav.Link
-    as={Link}
-    to={user ? "/profile" : "/login"}
-    className="header-action user-block"
-  >
-    <Person size={28} />
+              as={Link}
+              to={user ? "/profile" : "/login"}
+              className="header-action user-block"
+            >
+              <Person size={28} />
 
-    <div className="user-text desktop-only">
-      <small className="user-greeting">Hola{user && ","}</small>
+              <div className="user-text desktop-only">
+                <small className="user-greeting">
+                  Hola{user && ","}
+                </small>
 
-      {user && (
-        <span className="user-name">{user.nombres}</span>
-      )}
+                {user && (
+                  <span className="user-name">
+                    {user.nombres}
+                  </span>
+                )}
 
-      <strong className="account-text">
-        {user ? "Mi cuenta" : "Inicia sesión"}
-      </strong>
-    </div>
-  </Nav.Link>
-            {/* HISTORIAL (SOLO LOGUEADO) */}
-            {user  && (
+                <strong className="account-text">
+                  {user ? "Mi cuenta" : "Inicia sesión"}
+                </strong>
+              </div>
+            </Nav.Link>
+
+            {/* HISTORIAL DE PEDIDOS */}
+            {user && (
               <Nav.Link
                 as={Link}
                 to="/orders"
                 className="header-action desktop-only"
+                title="Mis pedidos"
               >
                 <ClockHistory size={22} />
               </Nav.Link>
             )}
 
-            {/* LOGOUT (SOLO LOGUEADO) */}
+            {/* LOGOUT */}
             {user && (
               <button
                 className="logout-btn header-action"
                 onClick={() => {
-                  if (confirm("¿Deseas cerrar sesión?")) logout();
+                  if (confirm("¿Deseas cerrar sesión?")) {
+                    logout();
+                  }
                 }}
               >
                 <BoxArrowRight size={30} />
@@ -151,8 +145,8 @@ const Header = () => {
         </div>
       </header>
 
-      {/* CATEGORY MENU (SIEMPRE VISIBLE) */}
-      <Navbar className="category-menu navbar-expand-md navbar-light">
+      {/* ================= MENÚ DE CATEGORÍAS ================= */}
+      <Navbar className="category-menu navbar-expand-md">
         <Container fluid>
           <Nav className="w-100 justify-content-around text-center">
             {MENUS[role].map((item, index) => (
@@ -163,7 +157,10 @@ const Header = () => {
                 className="category-item"
               >
                 {item.icon}
-                <span className="d-none d-md-inline"> {item.label}</span>
+                <span className="d-none d-md-inline">
+                  {" "}
+                  {item.label}
+                </span>
               </Nav.Link>
             ))}
           </Nav>

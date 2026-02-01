@@ -22,7 +22,6 @@
 {"timestamp":"2026-01-28T01:19:22.948Z","method":"GET","path":"/admin/test-local?Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjEsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AdGVzdC5jbCIsImlhdCI6MTc2OTU2Mjk3NSwiZXhwIjoxNzY5NTY2NTc1fQ.c2p7Yz0fQcdCtDSt5Lgu__KUUXcyZT61pgUcord1kcY","status":403,"ip":"::ffff:127.0.0.1","userId":21},
 {"timestamp":"2026-01-28T01:19:49.303Z","method":"GET","path":"/admin/test-local","status":403,"ip":"::ffff:127.0.0.1","userId":21},
 {"timestamp":"2026-01-28T01:20:37.055Z","method":"GET","path":"/admin/test-local","status":200,"ip":"::ffff:127.0.0.1","userId":21},
-<<<<<<< HEAD
 {"timestamp":"2026-01-29T22:46:50.120Z","method":"GET","path":"/","status":404,"ip":"::1","userId":null},
 {"timestamp":"2026-01-29T22:46:52.327Z","method":"GET","path":"/","status":404,"ip":"::1","userId":null},
 {"timestamp":"2026-01-29T22:46:54.235Z","method":"GET","path":"/","status":404,"ip":"::1","userId":null},
@@ -64,12 +63,6 @@
 {"timestamp":"2026-01-31T17:16:10.709Z","method":"GET","path":"/products","status":304,"ip":"::1","userId":null},
 {"timestamp":"2026-01-31T17:16:38.492Z","method":"GET","path":"/products","status":304,"ip":"::1","userId":null},
 {"timestamp":"2026-01-31T17:16:38.496Z","method":"GET","path":"/products","status":304,"ip":"::1","userId":null},
-=======
-{"timestamp":"2026-01-29T22:46:10.933Z","method":"GET","path":"/","status":404,"ip":"::1","userId":null},
-{"timestamp":"2026-01-29T22:46:36.834Z","method":"GET","path":"/products","status":200,"ip":"::1","userId":null},
-{"timestamp":"2026-01-29T22:46:36.889Z","method":"GET","path":"/favicon.ico","status":404,"ip":"::1","userId":null},
-{"timestamp":"2026-01-29T23:46:49.636Z","method":"GET","path":"/products","status":200,"ip":"::1","userId":null},
->>>>>>> 29a5dd65d099e9658ed91c6588da97d027201694
 {"timestamp":"2026-01-31T23:36:08.598Z","method":"POST","path":"/auth/login","status":401,"ip":"::1","userId":null},
 {"timestamp":"2026-01-31T23:36:12.176Z","method":"POST","path":"/auth/login","status":401,"ip":"::1","userId":null},
 {"timestamp":"2026-01-31T23:37:45.318Z","method":"POST","path":"/auth/login","status":200,"ip":"::1","userId":null},
