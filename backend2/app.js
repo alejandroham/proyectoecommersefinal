@@ -5,6 +5,8 @@ import { logger } from "./middlewares/logger.js";
 
 import cors from "cors";
 
+import cors from "cors";
+
 app.use(cors({
   origin: [
     "http://localhost:5173",
