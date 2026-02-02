@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "../styles/pages/Stock.css";
 import StockSidebar from "../components/stock/StockSidebar";
 import StockList from "../components/stock/StockList";
 import StockDashboard from "../components/stock/StockDashboard";
