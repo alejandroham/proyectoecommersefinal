@@ -1,8 +1,9 @@
-// modules/orders/orders.service.js
 import { OrdersModel } from "./orders.model.js";
 import { OrderItemsModel } from "./orderItems.model.js";
 import * as ProductModel from "../products/products.model.js";
+import { pool } from "../../config/database.js";
 
+// Estados permitidos para una orden
 const ESTADOS_VALIDOS = [
   "CARRITO",
   "CREADA",
@@ -13,16 +14,15 @@ const ESTADOS_VALIDOS = [
 ];
 
 /**
- * Obtiene el carrito activo del usuario.
- * Si no existe, lo crea automáticamente.
+ * Obtiene el carrito activo del usuario
+ * Si no existe, lo crea automáticamente
  */
 export const getCart = async (user_id) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
+  if (!user_id) throw new Error("Usuario no autenticado");
 
   let cart = await OrdersModel.getActiveCartByUser(user_id);
 
+  // Crear carrito si no existe
   if (!cart) {
     cart = await OrdersModel.createCart(user_id);
   }
@@ -30,6 +30,7 @@ export const getCart = async (user_id) => {
   const items = await OrderItemsModel.getByOrder(cart.orden_id);
   const total = await OrderItemsModel.calcTotal(cart.orden_id);
 
+  // Actualiza total del carrito
   await OrdersModel.updateTotal(cart.orden_id, total);
 
   return {
@@ -40,21 +41,15 @@ export const getCart = async (user_id) => {
 };
 
 /**
- * Agrega un producto al carrito activo.
- * Si el carrito no existe, se crea.
+ * Agrega un producto al carrito
  */
 export const addToCart = async (user_id, product_id) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
-
-  if (!product_id) {
-    throw new Error("Producto requerido");
-  }
+  if (!user_id) throw new Error("Usuario no autenticado");
+  if (!product_id) throw new Error("Producto requerido");
 
   let cart = await OrdersModel.getActiveCartByUser(user_id);
 
-  // 🔥 FIX CLAVE: autocrear carrito
+  // Crear carrito si no existe
   if (!cart) {
     cart = await OrdersModel.createCart(user_id);
   }
@@ -65,6 +60,7 @@ export const addToCart = async (user_id, product_id) => {
 
   const product = await ProductModel.findById(product_id);
 
+  // Validar producto activo
   if (!product || !product.is_active) {
     throw new Error("Producto no disponible");
   }
@@ -80,16 +76,11 @@ export const addToCart = async (user_id, product_id) => {
 };
 
 /**
- * Actualiza la cantidad de un ítem del carrito
+ * Actualiza la cantidad de un ítem
  */
 export const updateItemQty = async (user_id, item_id, qty) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
-
-  if (qty <= 0) {
-    throw new Error("Cantidad inválida");
-  }
+  if (!user_id) throw new Error("Usuario no autenticado");
+  if (qty <= 0) throw new Error("Cantidad inválida");
 
   const cart = await OrdersModel.getActiveCartByUser(user_id);
 
@@ -104,9 +95,7 @@ export const updateItemQty = async (user_id, item_id, qty) => {
  * Elimina un ítem del carrito
  */
 export const removeItem = async (user_id, item_id) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
+  if (!user_id) throw new Error("Usuario no autenticado");
 
   const cart = await OrdersModel.getActiveCartByUser(user_id);
 
@@ -129,56 +118,49 @@ export const changeStatus = async (orderId, nuevoEstado) => {
 };
 
 /**
- * Órdenes del usuario autenticado
+ * Obtiene las órdenes del usuario autenticado
  */
 export const getMyOrders = async (user_id) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
-
+  if (!user_id) throw new Error("Usuario no autenticado");
   return OrdersModel.getByUser(user_id);
 };
 
 /**
- * Todas las órdenes (admin)
+ * Obtiene todas las órdenes (admin)
  */
 export const getAllOrders = async () => {
   return OrdersModel.getAll();
 };
 
 /**
- * Checkout del carrito activo
+ * Checkout del carrito
  */
 export const checkout = async (user_id, shippingData) => {
-  if (!user_id) {
-    throw new Error("Usuario no autenticado");
-  }
+  if (!user_id) throw new Error("Usuario no autenticado");
 
   const cart = await OrdersModel.getActiveCartByUser(user_id);
 
-  if (!cart) {
-    throw new Error("No existe carrito activo");
-  }
+  if (!cart) throw new Error("No existe carrito activo");
+  if (cart.total <= 0) throw new Error("El carrito está vacío");
 
-  if (cart.total <= 0) {
-    throw new Error("El carrito está vacío");
-  }
-
+  // Cambia estado a PAGADA
   await OrdersModel.updateStatus(cart.orden_id, "PAGADA");
+
+  // Guarda datos de envío
   await OrdersModel.updateShipping(cart.orden_id, shippingData);
 
   return {
-    message: "Compra pagada, espere confirmación",
+    message: "Compra pagada correctamente",
     order_id: cart.orden_id
   };
 };
-import { pool } from "../../config/database.js";
 
 /**
- * DASHBOARD ADMIN
+ * Estadísticas del dashboard (admin)
  */
 export const getDashboardStats = async () => {
 
+  // Ventas del día
   const ventasHoy = await pool.query(`
     SELECT COALESCE(SUM(total),0) AS total
     FROM orders
@@ -186,6 +168,7 @@ export const getDashboardStats = async () => {
     AND status = 'PAGADA'
   `);
 
+  // Ventas últimos 7 días
   const ventasSemana = await pool.query(`
     SELECT COALESCE(SUM(total),0) AS total
     FROM orders
@@ -193,6 +176,7 @@ export const getDashboardStats = async () => {
     AND status = 'PAGADA'
   `);
 
+  // Ventas último año
   const ventasAnio = await pool.query(`
     SELECT COALESCE(SUM(total),0) AS total
     FROM orders
@@ -200,8 +184,9 @@ export const getDashboardStats = async () => {
     AND status = 'PAGADA'
   `);
 
+  // Producto más vendido
   const productoMasVendido = await pool.query(`
-    SELECT p.nombre, SUM(oi.quantity) AS vendidos
+    SELECT p.nombre, SUM(oi.qty) AS vendidos
     FROM order_items oi
     JOIN products p ON p.product_id = oi.product_id
     GROUP BY p.nombre
@@ -209,8 +194,9 @@ export const getDashboardStats = async () => {
     LIMIT 1
   `);
 
+  // Producto menos vendido
   const productoMenosVendido = await pool.query(`
-    SELECT p.nombre, SUM(oi.quantity) AS vendidos
+    SELECT p.nombre, SUM(oi.qty) AS vendidos
     FROM order_items oi
     JOIN products p ON p.product_id = oi.product_id
     GROUP BY p.nombre
@@ -218,6 +204,7 @@ export const getDashboardStats = async () => {
     LIMIT 1
   `);
 
+  // Productos sin stock
   const sinStock = await pool.query(`
     SELECT product_id, nombre
     FROM products

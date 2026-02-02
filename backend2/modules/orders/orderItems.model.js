@@ -1,7 +1,9 @@
-// modules/orders/orderItems.model.js
 import { pool } from "../../config/database.js";
 
 export const OrderItemsModel = {
+
+
+  // AGREGAR ITEM AL CARRITO
 
   addItem: async (order_id, product_id, qty, unit_price) => {
     const { rows } = await pool.query(
@@ -24,6 +26,9 @@ export const OrderItemsModel = {
     return rows[0];
   },
 
+
+  // OBTENER ITEMS DE UNA ORDEN
+
   getByOrder: async (order_id) => {
     const { rows } = await pool.query(
       `
@@ -35,7 +40,8 @@ export const OrderItemsModel = {
         oi.line_total,
         p.nombre
       FROM order_items oi
-      JOIN products p ON p.product_id = oi.product_id
+      JOIN products p
+        ON p.product_id = oi.product_id
       WHERE oi.order_id = $1
       `,
       [order_id]
@@ -43,6 +49,9 @@ export const OrderItemsModel = {
 
     return rows;
   },
+
+
+  // CALCULAR TOTAL DE ORDEN
 
   calcTotal: async (order_id) => {
     const { rows } = await pool.query(
@@ -57,6 +66,9 @@ export const OrderItemsModel = {
     return Number(rows[0].total);
   },
 
+
+  // ACTUALIZAR CANTIDAD
+
   updateQty: async (order_item_id, qty) => {
     await pool.query(
       `
@@ -69,9 +81,15 @@ export const OrderItemsModel = {
     );
   },
 
+
+  // ELIMINAR ITEM
+
   removeItem: async (order_item_id) => {
     await pool.query(
-      `DELETE FROM order_items WHERE order_item_id = $1`,
+      `
+      DELETE FROM order_items
+      WHERE order_item_id = $1
+      `,
       [order_item_id]
     );
   }

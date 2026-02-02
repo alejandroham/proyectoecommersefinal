@@ -2,12 +2,17 @@ import { pool } from "../../config/database.js";
 
 export const OrdersModel = {
 
+
+  // CARRITO ACTIVO
+
   getActiveCartByUser: async (user_id) => {
     const { rows } = await pool.query(
       `
       SELECT *
       FROM orders
-      WHERE user_id = $1 AND status = 'CARRITO'
+      WHERE user_id = $1
+        AND status = 'CARRITO'
+      LIMIT 1
       `,
       [user_id]
     );
@@ -26,35 +31,44 @@ export const OrdersModel = {
     return rows[0];
   },
 
-  updateStatus: async (orden_id, status) => {
+
+  // ESTADO / TOTAL
+
+  updateStatus: async (order_id, status) => {
     await pool.query(
       `
       UPDATE orders
-      SET status = $1, updated_at = NOW()
-      WHERE orden_id = $2
+      SET status = $1,
+          updated_at = NOW()
+      WHERE order_id = $2
       `,
-      [status, orden_id]
+      [status, order_id]
     );
   },
 
-  updateTotal: async (orden_id, total) => {
+  updateTotal: async (order_id, total) => {
     await pool.query(
       `
       UPDATE orders
-      SET total = $1, updated_at = NOW()
-      WHERE orden_id = $2
+      SET total = $1,
+          updated_at = NOW()
+      WHERE order_id = $2
       `,
-      [total, orden_id]
+      [total, order_id]
     );
   },
+
+
+  // CONSULTAS
 
   getByUser: async (user_id) => {
     const { rows } = await pool.query(
       `
       SELECT *
       FROM orders
-      WHERE user_id = $1 AND status <> 'CARRITO'
-      ORDER BY orden_id DESC
+      WHERE user_id = $1
+        AND status <> 'CARRITO'
+      ORDER BY order_id DESC
       `,
       [user_id]
     );
@@ -67,13 +81,16 @@ export const OrdersModel = {
       SELECT o.*, u.email
       FROM orders o
       JOIN users u ON u.user_id = o.user_id
-      ORDER BY o.orden_id DESC
+      ORDER BY o.order_id DESC
       `
     );
     return rows;
   },
 
-  updateShipping: async (orden_id, data) => {
+
+  // ENVÍO
+
+  updateShipping: async (order_id, data) => {
     await pool.query(
       `
       UPDATE orders SET
@@ -83,7 +100,7 @@ export const OrdersModel = {
         ship_city = $4,
         ship_region = $5,
         updated_at = NOW()
-      WHERE orden_id = $6
+      WHERE order_id = $6
       `,
       [
         data.ship_label,
@@ -91,7 +108,7 @@ export const OrdersModel = {
         data.ship_line2,
         data.ship_city,
         data.ship_region,
-        orden_id
+        order_id
       ]
     );
   }
