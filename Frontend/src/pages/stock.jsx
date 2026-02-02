@@ -4,7 +4,6 @@ import StockSidebar from "../components/stock/StockSidebar";
 import StockList from "../components/stock/StockList";
 import StockDashboard from "../components/stock/StockDashboard";
 import StockAdd from "../components/stock/StockAdd";
-import StockEdit from "../components/stock/StockEdit";
 import StockAdmin from "../components/stock/StockAdmin";
 
 function Stock() {
@@ -23,7 +22,7 @@ function Stock() {
 
         {activeView === "add" && <StockAdd />}
 
-        {activeView === "edit" && <StockEdit />}
+
 
         {activeView === "admin" && <StockAdmin />}
 

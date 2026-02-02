@@ -1,6 +1,5 @@
 import * as ordersService from "./orders.service.js";
 
-
 /* ============================
    CARRITO
 ============================ */
@@ -60,10 +59,15 @@ export const removeItem = async (req, res) => {
 export const checkout = async (req, res) => {
   try {
     const user_id = req.user.user_id;
-    const order = await ordersService.checkout(user_id, req.body);
-    res.json(order);
+    const result = await ordersService.checkout(
+      user_id,
+      req.body // shippingData
+    );
+
+    res.status(201).json(result);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    // Errores esperables de negocio → 409
+    res.status(409).json({ error: error.message });
   }
 };
 
@@ -71,7 +75,7 @@ export const checkout = async (req, res) => {
    ÓRDENES
 ============================ */
 
-// Órdenes del usuario
+// Órdenes del usuario autenticado
 export const getMyOrders = async (req, res) => {
   try {
     const user_id = req.user.user_id;
@@ -92,7 +96,7 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// 🔥 CAMBIAR ESTADO DE ORDEN (ADMIN)
+// Cambiar estado de orden (admin)
 export const changeStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -106,12 +110,9 @@ export const changeStatus = async (req, res) => {
 };
 
 /* ============================
-   DASHBOARD
+   DASHBOARD — ADMIN
 ============================ */
 
-
-
-// Dashboard admin
 export const getDashboard = async (req, res) => {
   try {
     const stats = await ordersService.getDashboardStats();
@@ -121,15 +122,5 @@ export const getDashboard = async (req, res) => {
     res.status(500).json({
       error: "Error al obtener estadísticas del dashboard"
     });
-  }
-};
-
-// Estadísticas dashboard admin
-export const getDashboardStats = async (req, res) => {
-  try {
-    const stats = await ordersService.getDashboardStats();
-    res.json(stats);
-  } catch {
-    res.status(500).json({ error: "Error al obtener dashboard" });
   }
 };

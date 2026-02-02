@@ -1,11 +1,27 @@
 import * as ProductModel from "./products.model.js";
 import { CATEGORIAS_VALIDAS } from "../../utils/categories.js";
 
-// Validar categoría
+/**
+ * Normalizar categoría
+ */
+const normalizarCategoria = (catego) => {
+  if (!catego) return null;
+  return catego.trim();
+};
+
+/**
+ * Validar categoría
+ */
 const validarCategoria = (catego) => {
-  if (!CATEGORIAS_VALIDAS.includes(catego)) {
-    throw new Error("Categoría no válida");
+  const categoria = normalizarCategoria(catego);
+
+  if (!categoria || !CATEGORIAS_VALIDAS.includes(categoria)) {
+    const error = new Error("Categoría no válida");
+    error.code = "CATEGORIA_INVALIDA";
+    throw error;
   }
+
+  return categoria;
 };
 
 /**
@@ -20,7 +36,11 @@ export const listarProductos = async () => {
  */
 export const obtenerProducto = async (id) => {
   const product = await ProductModel.findById(id);
-  if (!product) throw new Error("Producto no encontrado");
+  if (!product) {
+    const error = new Error("Producto no encontrado");
+    error.code = "NOT_FOUND";
+    throw error;
+  }
   return product;
 };
 
@@ -28,15 +48,15 @@ export const obtenerProducto = async (id) => {
  * Crear producto
  */
 export const crearProducto = async (data) => {
-  validarCategoria(data.catego);
+  const categoria = validarCategoria(data.catego);
 
   return ProductModel.create({
-    nombre: data.nombre,
-    descripcion: data.descripcion,
-    image_url: data.image_url,
-    price: data.price,
-    stock: data.stock,
-    catego: data.catego,
+    nombre: data.nombre?.trim(),
+    descripcion: data.descripcion?.trim(),
+    image_url: data.image_url?.trim(),
+    price: Number(data.price),
+    stock: Number(data.stock),
+    catego: categoria,
     is_active: data.is_active ?? true
   });
 };
@@ -45,16 +65,22 @@ export const crearProducto = async (data) => {
  * Actualizar producto
  */
 export const actualizarProducto = async (id, data) => {
-  if (data.catego) validarCategoria(data.catego);
+  if (data.catego) {
+    data.catego = validarCategoria(data.catego);
+  }
 
   const product = await ProductModel.update(id, data);
-  if (!product) throw new Error("Producto no encontrado");
+  if (!product) {
+    const error = new Error("Producto no encontrado");
+    error.code = "NOT_FOUND";
+    throw error;
+  }
 
   return product;
 };
 
 /**
- * Activar / desactivar
+ * Activar / desactivar producto
  */
 export const cambiarEstado = async (id, estado) => {
   await ProductModel.setActive(id, estado);

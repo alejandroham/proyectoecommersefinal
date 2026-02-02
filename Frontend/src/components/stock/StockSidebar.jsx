@@ -23,13 +23,13 @@ function StockSidebar({ activeView, setActiveView }) {
       >
         ➕ Añadir producto
       </button>
-
+{/* 
       <button
         className={activeView === "edit" ? "active" : ""}
         onClick={() => setActiveView("edit")}
       >
         ✏️ Editar producto
-      </button>
+      </button>*/}
           <button
         className={activeView === "admin" ? "active" : ""}
         onClick={() => setActiveView("admin")}

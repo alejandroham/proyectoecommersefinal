@@ -1,22 +1,16 @@
-import { useState } from "react";
 import ProductForm from "./ProductForm";
 
 function StockAdd() {
-  const [showForm, setShowForm] = useState(true);
-
   return (
     <div className="stock-add">
       <h2>➕ Añadir producto</h2>
 
-      {showForm && (
-        <ProductForm
-          product={null}               // 👈 CLAVE
-          onClose={() => setShowForm(false)}
-          onSaved={() => {
-            alert("Producto creado correctamente");
-          }}
-        />
-      )}
+      <ProductForm
+        product={null}
+        onSaved={() => {
+          alert("Producto creado correctamente");
+        }}
+      />
     </div>
   );
 }

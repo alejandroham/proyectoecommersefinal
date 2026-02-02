@@ -6,14 +6,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 function StockAdmin() {
   const { user } = useAuth();
 
-  // ======================
-  // ESTADOS
-  // ======================
   const [products, setProducts] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [originalProduct, setOriginalProduct] = useState(null);
   const [search, setSearch] = useState("");
-  const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [savingId, setSavingId] = useState(null);
 
   // ======================
   // SEGURIDAD
@@ -31,18 +29,13 @@ function StockAdmin() {
       const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
 
-      const adapted = data.map(p => ({
-        id: p.product_id,
-        nombre: p.nombre,
-        descripcion: p.descripcion || "",
-        image_url: p.image_url || "",
-        price: Number(p.price),
-        stock: Number(p.stock),
-        catego: p.catego,
-        is_active: p.is_active
-      }));
-
-      setProducts(adapted);
+      setProducts(
+        data.map(p => ({
+          ...p,
+          price: Number(p.price),
+          stock: Number(p.stock),
+        }))
+      );
     } catch {
       alert("Error cargando productos");
     } finally {
@@ -55,48 +48,83 @@ function StockAdmin() {
   }, []);
 
   // ======================
-  // GUARDAR CAMBIOS
+  // EDITAR INLINE
   // ======================
-  const saveProduct = async () => {
+  const handleChange = (id, field, value) => {
+    setProducts(prev =>
+      prev.map(p =>
+        p.product_id === id ? { ...p, [field]: value } : p
+      )
+    );
+  };
+
+  // ======================
+  // GUARDAR
+  // ======================
+  const saveProduct = async (product) => {
     const token = localStorage.getItem("token");
+    setSavingId(product.product_id);
 
     try {
-      setSaving(true);
+      const res = await fetch(
+        `${API_URL}/products/${product.product_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            nombre: product.nombre,
+            descripcion: product.descripcion,
+            image_url: product.image_url,
+            price: Number(product.price),
+            stock: Number(product.stock),
+            catego: product.catego,
+            is_active: product.is_active,
+          }),
+        }
+      );
 
-      const res = await fetch(`${API_URL}/products/${editing.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          nombre: editing.nombre,
-          descripcion: editing.descripcion,
-          image_url: editing.image_url,
-          price: Number(editing.price),
-          stock: Number(editing.stock),
-          catego: editing.catego,
-          is_active: editing.is_active
-        })
-      });
+      if (!res.ok) throw new Error("Error al guardar");
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Error al guardar");
-      }
+      const updated = await res.json();
 
-      setEditing(null);
-      loadProducts();
+      setProducts(prev =>
+        prev.map(p =>
+          p.product_id === updated.product_id ? updated : p
+        )
+      );
 
-    } catch (error) {
-      alert(error.message);
+      setEditingId(null);
+      setOriginalProduct(null);
+    } catch (err) {
+      alert(err.message);
     } finally {
-      setSaving(false);
+      setSavingId(null);
     }
   };
 
   // ======================
-  // FILTRO BÚSQUEDA
+  // CANCELAR (RESTABLECE)
+  // ======================
+  const cancelEdit = () => {
+    if (!originalProduct) return;
+
+    setProducts(prev =>
+      prev.map(p =>
+        p.product_id === originalProduct.product_id
+          ? originalProduct
+          : p
+      )
+    );
+
+    setEditingId(null);
+    setOriginalProduct(null);
+  };
+
+  // ======================
+  // FILTRO
   // ======================
   const filteredProducts = products.filter(p =>
     p.nombre.toLowerCase().includes(search.toLowerCase())
@@ -113,7 +141,7 @@ function StockAdmin() {
         className="stock-search"
         placeholder="Buscar producto..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={e => setSearch(e.target.value)}
       />
 
       {loading && <p>Cargando productos...</p>}
@@ -121,126 +149,194 @@ function StockAdmin() {
       <table className="stock-table">
         <thead>
           <tr>
-            <th>Producto</th>
+            <th>Imagen</th>
+            <th>Nombre</th>
             <th>Precio</th>
             <th>Stock</th>
             <th>Categoría</th>
-            <th>Estado</th>
-            <th></th>
+            <th>Activo</th>
+            <th>Acciones</th>
           </tr>
         </thead>
 
         <tbody>
-          {filteredProducts.map(p => (
-            <tr key={p.id}>
-              <td>{p.nombre}</td>
-              <td>${p.price.toLocaleString("es-CL")}</td>
-              <td>{p.stock}</td>
-              <td>{p.catego}</td>
-              <td>{p.is_active ? "Activo" : "Inactivo"}</td>
-              <td>
-                <button onClick={() => setEditing({ ...p })}>
-                  ✏️ Editar
-                </button>
-              </td>
-            </tr>
-          ))}
+          {filteredProducts.map(p => {
+            const editing = editingId === p.product_id;
+
+            return (
+              <tr key={p.product_id}>
+                {/* IMAGEN */}
+                <td>
+                  {editing ? (
+                    <div className="image-edit">
+                      <input
+                        type="text"
+                        value={p.image_url || ""}
+                        placeholder="URL imagen"
+                        onChange={e =>
+                          handleChange(
+                            p.product_id,
+                            "image_url",
+                            e.target.value
+                          )
+                        }
+                      />
+                      {p.image_url && (
+                        <img
+                          src={p.image_url}
+                          alt={p.nombre}
+                          className="stock-image-preview"
+                        />
+                      )}
+                    </div>
+                  ) : p.image_url ? (
+                    <img
+                      src={p.image_url}
+                      alt={p.nombre}
+                      className="stock-image"
+                    />
+                  ) : (
+                    "—"
+                  )}
+                </td>
+
+                {/* NOMBRE */}
+                <td>
+                  {editing ? (
+                    <input
+                      value={p.nombre}
+                      onChange={e =>
+                        handleChange(
+                          p.product_id,
+                          "nombre",
+                          e.target.value
+                        )
+                      }
+                    />
+                  ) : (
+                    p.nombre
+                  )}
+                </td>
+
+                {/* PRECIO */}
+                <td>
+                  {editing ? (
+                    <input
+                      type="number"
+                      value={p.price}
+                      onChange={e =>
+                        handleChange(
+                          p.product_id,
+                          "price",
+                          e.target.value
+                        )
+                      }
+                    />
+                  ) : (
+                    `$${p.price.toLocaleString("es-CL")}`
+                  )}
+                </td>
+
+                {/* STOCK */}
+                <td>
+                  {editing ? (
+                    <input
+                      type="number"
+                      value={p.stock}
+                      onChange={e =>
+                        handleChange(
+                          p.product_id,
+                          "stock",
+                          e.target.value
+                        )
+                      }
+                    />
+                  ) : (
+                    p.stock
+                  )}
+                </td>
+
+                {/* CATEGORÍA */}
+                <td>
+                  {editing ? (
+                    <select
+                      value={p.catego}
+                      onChange={e =>
+                        handleChange(
+                          p.product_id,
+                          "catego",
+                          e.target.value
+                        )
+                      }
+                    >
+                      <option value="Gaming">Gaming</option>
+                      <option value="Computación">Computación</option>
+                      <option value="Componentes">Componentes</option>
+                      <option value="Redes">Redes</option>
+                      <option value="Hogar">Hogar</option>
+                    </select>
+                  ) : (
+                    p.catego
+                  )}
+                </td>
+
+                {/* ACTIVO */}
+                <td className="center">
+                  {editing ? (
+                    <input
+                      type="checkbox"
+                      checked={p.is_active}
+                      onChange={e =>
+                        handleChange(
+                          p.product_id,
+                          "is_active",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  ) : p.is_active ? (
+                    "✔"
+                  ) : (
+                    "✖"
+                  )}
+                </td>
+
+                {/* ACCIONES */}
+                <td className="actions">
+                  {editing ? (
+                    <>
+                      <button
+                        className="btn btn-save"
+                        onClick={() => saveProduct(p)}
+                        disabled={savingId === p.product_id}
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        className="btn btn-cancel"
+                        onClick={cancelEdit}
+                        disabled={savingId === p.product_id}
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      className="btn btn-edit"
+                      onClick={() => {
+                        setOriginalProduct({ ...p });
+                        setEditingId(p.product_id);
+                      }}
+                    >
+                      Editar
+                    </button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-
-      {/* ======================
-          MODAL EDICIÓN
-      ====================== */}
-      {editing && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Editar producto</h3>
-
-            <input
-              placeholder="Nombre"
-              value={editing.nombre}
-              onChange={e =>
-                setEditing({ ...editing, nombre: e.target.value })
-              }
-            />
-
-            <textarea
-              placeholder="Descripción"
-              value={editing.descripcion}
-              onChange={e =>
-                setEditing({ ...editing, descripcion: e.target.value })
-              }
-            />
-
-            <input
-              placeholder="URL de imagen"
-              value={editing.image_url}
-              onChange={e =>
-                setEditing({ ...editing, image_url: e.target.value })
-              }
-            />
-
-            {editing.image_url && (
-              <img
-                src={editing.image_url}
-                alt="preview"
-                style={{ width: "100%", marginBottom: 10 }}
-              />
-            )}
-
-            <input
-              type="number"
-              placeholder="Precio"
-              value={editing.price}
-              onChange={e =>
-                setEditing({ ...editing, price: e.target.value })
-              }
-            />
-
-            <input
-              type="number"
-              placeholder="Stock"
-              value={editing.stock}
-              onChange={e =>
-                setEditing({ ...editing, stock: e.target.value })
-              }
-            />
-
-            {/* 👇 CATEGORÍAS CORRECTAS */}
-            <select
-              value={editing.catego}
-              onChange={e =>
-                setEditing({ ...editing, catego: e.target.value })
-              }
-            >
-              
-              <option value="Gaming">Gaming</option>
-              <option value="Computación">Computación</option>
-              <option value="Componentes">Componentes</option>
-              <option value="Redes">Redes</option>
-              <option value="Hogar">Hogar</option>
-            </select>
-
-            <label>
-              <input
-                type="checkbox"
-                checked={editing.is_active}
-                onChange={e =>
-                  setEditing({ ...editing, is_active: e.target.checked })
-                }
-              />
-              Producto activo
-            </label>
-
-            <div className="modal-actions">
-              <button onClick={saveProduct} disabled={saving}>
-                {saving ? "Guardando..." : "💾 Guardar"}
-              </button>
-              <button onClick={() => setEditing(null)}>Cancelar</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

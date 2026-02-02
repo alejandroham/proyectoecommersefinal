@@ -2,9 +2,6 @@ import { pool } from "../../config/database.js";
 
 export const OrdersModel = {
 
-
-  // CARRITO ACTIVO
-
   getActiveCartByUser: async (user_id) => {
     const { rows } = await pool.query(
       `
@@ -31,11 +28,8 @@ export const OrdersModel = {
     return rows[0];
   },
 
-
-  // ESTADO / TOTAL
-
-  updateStatus: async (order_id, status) => {
-    await pool.query(
+  updateStatus: async (order_id, status, client = pool) => {
+    await client.query(
       `
       UPDATE orders
       SET status = $1,
@@ -57,9 +51,6 @@ export const OrdersModel = {
       [total, order_id]
     );
   },
-
-
-  // CONSULTAS
 
   getByUser: async (user_id) => {
     const { rows } = await pool.query(
@@ -87,11 +78,8 @@ export const OrdersModel = {
     return rows;
   },
 
-
-  // ENVÍO
-
-  updateShipping: async (order_id, data) => {
-    await pool.query(
+  updateShipping: async (order_id, data, client) => {
+    await client.query(
       `
       UPDATE orders SET
         ship_label = $1,

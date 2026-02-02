@@ -1,3 +1,6 @@
+/* =========================================================
+   LAYOUT GENERAL STOCK
+========================================================= */
 .stock-layout {
   display: flex;
   min-height: calc(100vh - 140px);
@@ -11,18 +14,19 @@
 }
 
 .stock-sidebar h4 {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .stock-sidebar button {
   display: block;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   padding: 10px;
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
+  border-radius: 6px;
 }
 
 .stock-sidebar button:hover {
@@ -34,63 +38,78 @@
   padding: 30px;
 }
 
-.stock-form {
-  max-width: 400px;
+/* =========================================================
+   STOCK ADMIN
+========================================================= */
+.stock-admin {
+  padding: 10px;
 }
 
-.stock-form label {
-  display: block;
-  margin-top: 10px;
+.stock-search {
+  margin-bottom: 14px;
+  padding: 6px 10px;
+  width: 260px;
 }
 
-.stock-form input,
-.stock-form select {
-  width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-}
-
-.form-actions {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.btn-primary {
-  background: #0d6efd;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-}
-
-.btn-secondary {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-}
-
+/* =========================================================
+   TABLA STOCK
+========================================================= */
 .stock-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 12px;
+  font-size: 0.9rem;
 }
 
 .stock-table th,
 .stock-table td {
   border: 1px solid #ddd;
-  padding: 10px;
-  text-align: left;
+  padding: 8px;
+  vertical-align: top;
 }
 
 .stock-table th {
-  background: #f0f0f0;
+  background: #f3f3f3;
+  font-weight: 600;
+}
+
+.stock-table input,
+.stock-table select {
+  width: 100%;
+  padding: 5px 6px;
+  font-size: 0.85rem;
+}
+
+/* =========================================================
+   IMÁGENES
+========================================================= */
+.stock-image {
+  width: 60px;
+  border-radius: 6px;
+}
+
+.stock-image-preview {
+  width: 80px;
+  margin-top: 6px;
+  border-radius: 6px;
+}
+
+.image-edit input {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+.center {
+  text-align: center;
 }
 
 .status {
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .status.active {
@@ -103,9 +122,46 @@
   color: #721c24;
 }
 
-.error {
-  color: red;
+/* =========================================================
+   ACCIONES Y BOTONES
+========================================================= */
+.actions {
+  display: flex;
+  gap: 6px;
 }
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn-edit {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-save {
+  background: #16a34a;
+  color: #fff;
+}
+
+.btn-cancel {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -113,13 +169,12 @@
 }
 
 .dashboard-card {
-  background: var(--card-bg, #1f1f1f);
-  color: #ffffff; /* 🔥 CLAVE */
+  background: #1f1f1f;
+  color: #ffffff;
   padding: 1.2rem;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
-
 
 .dashboard-card h4 {
   margin-bottom: 0.5rem;
@@ -129,4 +184,38 @@
 .dashboard-card p {
   font-size: 1.4rem;
   font-weight: bold;
+}
+
+/* =========================================================
+   ERRORES
+========================================================= */
+.error {
+  color: #dc2626;
+  font-size: 0.9rem;
+}
+
+
+
+/*======================================
+corrige el estilo del productForm.jsx
+===============================*/
+.product-form {
+  max-width: 500px;
+}
+
+.product-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+}
+
+.form-actions {
+  margin-top: 16px;
 }

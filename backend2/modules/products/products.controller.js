@@ -1,4 +1,5 @@
 import * as ProductService from "./products.service.js";
+import { CATEGORIAS_VALIDAS } from "../../utils/categories.js";
 
 /**
  * GET /products
@@ -28,7 +29,14 @@ export const createProduct = async (req, res) => {
     const product = await ProductService.crearProducto(req.body);
     res.status(201).json(product);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    if (error.code === "CATEGORIA_INVALIDA") {
+      return res.status(400).json({
+        error: "Categoría no válida",
+        categoriasValidas: CATEGORIAS_VALIDAS
+      });
+    }
+
+    res.status(500).json({ error: "Error al crear producto" });
   }
 };
 
@@ -43,7 +51,14 @@ export const updateProduct = async (req, res) => {
     );
     res.json(product);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    if (error.code === "CATEGORIA_INVALIDA") {
+      return res.status(400).json({
+        error: "Categoría no válida",
+        categoriasValidas: CATEGORIAS_VALIDAS
+      });
+    }
+
+    res.status(404).json({ error: error.message });
   }
 };
 
@@ -52,7 +67,7 @@ export const updateProduct = async (req, res) => {
  */
 export const enableProduct = async (req, res) => {
   await ProductService.cambiarEstado(req.params.id, true);
-  res.sendStatus(204);
+  res.json({ ok: true });
 };
 
 /**
@@ -60,7 +75,7 @@ export const enableProduct = async (req, res) => {
  */
 export const disableProduct = async (req, res) => {
   await ProductService.cambiarEstado(req.params.id, false);
-  res.sendStatus(204);
+  res.json({ ok: true });
 };
 
 /**
@@ -68,7 +83,7 @@ export const disableProduct = async (req, res) => {
  */
 export const deleteProduct = async (req, res) => {
   await ProductService.eliminarProducto(req.params.id);
-  res.sendStatus(204);
+  res.json({ ok: true });
 };
 
 /**

@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function ProductForm({ product, onClose, onSaved }) {
-  const { token } = useAuth();
+const CATEGORIAS_VALIDAS = [
+  "Gaming",
+  "Computación",
+  "Componentes",
+  "Redes",
+  "Hogar"
+];
+
+function ProductForm({ product, onSaved }) {
+  const token = localStorage.getItem("token");
 
   const [form, setForm] = useState({
     nombre: "",
@@ -16,38 +23,38 @@ function ProductForm({ product, onClose, onSaved }) {
   });
 
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-
-  // Cargar producto al editar
-  
+  // ======================
+  // CARGAR PRODUCTO (si se reutiliza)
+  // ======================
   useEffect(() => {
     if (product) {
       setForm({
-        nombre: product.name || "",
-        descripcion: product.description || "",
+        nombre: product.nombre || "",
+        descripcion: product.descripcion || "",
         price: product.price || "",
         stock: product.stock || "",
-        image_url: product.image || "",
-        catego: product.category || ""
+        image_url: product.image_url || "",
+        catego: product.catego || ""
       });
     }
   }, [product]);
 
-  
-  // Limpiar cuando el usuario corrige
-  
+  // ======================
+  // HANDLE CHANGE
+  // ======================
   const handleChange = (e) => {
-  setError("");
-  setForm({
-    ...form,
-    [e.target.name]: e.target.value
-  });
-};
+    setError("");
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
 
-
-  
-  // Validaciones
-  
+  // ======================
+  // VALIDACIONES
+  // ======================
   const validate = () => {
     if (!form.nombre.trim()) return "El nombre es obligatorio";
     if (form.nombre.length < 3) return "Nombre muy corto";
@@ -63,18 +70,21 @@ function ProductForm({ product, onClose, onSaved }) {
 
     if (
       !form.image_url ||
-      !form.image_url.match(/^https?:\/\/.+\.(jpg|jpeg|png|webp)$/i)
+      !form.image_url.match(
+        /^https?:\/\/.+\.(jpg|jpeg|png|webp)(\?.*)?$/i
+      )
     )
       return "Imagen debe ser una URL válida (jpg, png, webp)";
 
-    if (!form.catego) return "Seleccione una categoría";
+    if (!CATEGORIAS_VALIDAS.includes(form.catego))
+      return "Categoría no válida";
 
     return null;
   };
 
-  
-  // submit
-  
+  // ======================
+  // SUBMIT
+  // ======================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -84,107 +94,143 @@ function ProductForm({ product, onClose, onSaved }) {
       return;
     }
 
-    const method = product ? "PUT" : "POST";
-    const url = product
-      ? `${API_URL}/products/${product.id}`
-      : `${API_URL}/products`;
-
-    const res = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        ...form,
-        price: Number(form.price),
-        stock: Number(form.stock)
-})
-
-    });
-
-    if (!res.ok) {
-      setError("Error al guardar producto");
+    if (!token) {
+      setError("No autorizado. Inicie sesión nuevamente.");
       return;
     }
 
-    onSaved();
-    onClose();
+    setSaving(true);
+
+    try {
+      const res = await fetch(`${API_URL}/products`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nombre: form.nombre.trim(),
+          descripcion: form.descripcion.trim(),
+          price: Number(form.price),
+          stock: Number(form.stock),
+          image_url: form.image_url.trim(),
+          catego: form.catego
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error backend");
+      }
+
+      onSaved();
+
+      setForm({
+        nombre: "",
+        descripcion: "",
+        price: "",
+        stock: "",
+        image_url: "",
+        catego: ""
+      });
+    } catch (err) {
+      setError(err.message || "Error al crear producto");
+    } finally {
+      setSaving(false);
+    }
   };
 
+  // ======================
+  // UI
+  // ======================
   return (
-    <div className="modal-backdrop">
-      <div className="modal">
+    <div className="product-form">
+      <h3>Nuevo producto</h3>
 
-        <h2>
-          {product ? "Editar producto" : "Nuevo producto"}
-        </h2>
+      {error && <p className="error">{error}</p>}
 
-        {error && <p className="error">{error}</p>}
-
-        <form onSubmit={handleSubmit}>
-
+      <form onSubmit={handleSubmit}>
+        <label>
+          Nombre
           <input
             name="nombre"
-            placeholder="Nombre"
             value={form.nombre}
             onChange={handleChange}
           />
+        </label>
 
+        <label>
+          Descripción
           <textarea
             name="descripcion"
-            placeholder="Descripción"
             value={form.descripcion}
             onChange={handleChange}
           />
+        </label>
 
+        <label>
+          Precio
           <input
             type="number"
             name="price"
-            placeholder="Precio"
             value={form.price}
             onChange={handleChange}
           />
+        </label>
 
+        <label>
+          Stock
           <input
             type="number"
             name="stock"
-            placeholder="Stock"
             value={form.stock}
             onChange={handleChange}
           />
+        </label>
 
+        <label>
+          URL Imagen
           <input
             name="image_url"
-            placeholder="URL de imagen"
             value={form.image_url}
             onChange={handleChange}
           />
+        </label>
 
+        {form.image_url && (
+          <img
+            src={form.image_url}
+            alt="preview"
+            className="stock-image-preview"
+          />
+        )}
+
+        <label>
+          Categoría
           <select
             name="catego"
             value={form.catego}
             onChange={handleChange}
           >
             <option value="">Seleccione categoría</option>
-            <option value="Gaming">Gaming</option>
-            <option value="computación">computación</option>
-            <option value="componentes">componentes</option>
-            <option value="redes">redes</option>
-            <option value="Hogar">Hogar</option>
+            {CATEGORIAS_VALIDAS.map(cat => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
           </select>
+        </label>
 
-          <div className="modal-actions">
-            <button type="submit">
-              {product ? "Guardar cambios" : "Crear producto"}
-            </button>
-
-            <button type="button" onClick={onClose}>
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="form-actions">
+          <button
+            type="submit"
+            className="btn btn-save"
+            disabled={saving}
+          >
+            {saving ? "Guardando..." : "Crear producto"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

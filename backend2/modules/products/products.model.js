@@ -2,7 +2,6 @@ import { pool } from "../../config/database.js";
 
 /**
  * Obtener todos los productos
- * (admin verá activos e inactivos)
  */
 export const findAll = async () => {
   const { rows } = await pool.query(
@@ -17,6 +16,17 @@ export const findAll = async () => {
 export const findById = async (id) => {
   const { rows } = await pool.query(
     `SELECT * FROM products WHERE product_id = $1`,
+    [id]
+  );
+  return rows[0];
+};
+
+/**
+ * Obtener producto para actualización / venta (FOR UPDATE)
+ */
+export const findByIdForUpdate = async (id, client) => {
+  const { rows } = await client.query(
+    `SELECT * FROM products WHERE product_id = $1 FOR UPDATE`,
     [id]
   );
   return rows[0];
@@ -79,6 +89,25 @@ export const update = async (id, data) => {
   );
 
   return rows[0];
+};
+
+/**
+ * Descontar stock de forma segura
+ */
+export const discountStock = async (id, qty, client) => {
+  const { rowCount, rows } = await client.query(
+    `
+    UPDATE products
+    SET stock = stock - $1,
+        updated_at = NOW()
+    WHERE product_id = $2
+      AND stock >= $1
+    RETURNING *
+    `,
+    [qty, id]
+  );
+
+  return rowCount ? rows[0] : null;
 };
 
 /**
