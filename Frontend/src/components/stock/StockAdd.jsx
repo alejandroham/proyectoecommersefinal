@@ -1,4 +1,24 @@
+import { useState } from "react";
+import ProductForm from "../components/ProductForm";
+
 function StockAdd() {
-  return <h2>➕ Añadir producto (solo vista)</h2>;
+  const [showForm, setShowForm] = useState(true);
+
+  return (
+    <div className="stock-add">
+      <h2>➕ Añadir producto</h2>
+
+      {showForm && (
+        <ProductForm
+          product={null}               // 👈 CLAVE
+          onClose={() => setShowForm(false)}
+          onSaved={() => {
+            alert("Producto creado correctamente");
+          }}
+        />
+      )}
+    </div>
+  );
 }
+
 export default StockAdd;
