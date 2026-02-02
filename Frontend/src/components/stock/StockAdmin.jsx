@@ -7,12 +7,13 @@ function StockAdmin() {
   const { user } = useAuth();
 
   // ======================
-  // ESTADOS (SIEMPRE ARRIBA)
+  // ESTADOS
   // ======================
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // ======================
   // SEGURIDAD
@@ -27,7 +28,6 @@ function StockAdmin() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-
       const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
 
@@ -36,8 +36,8 @@ function StockAdmin() {
         nombre: p.nombre,
         descripcion: p.descripcion || "",
         image_url: p.image_url || "",
-        price: p.price,
-        stock: p.stock,
+        price: Number(p.price),
+        stock: Number(p.stock),
         catego: p.catego,
         is_active: p.is_active
       }));
@@ -61,6 +61,8 @@ function StockAdmin() {
     const token = localStorage.getItem("token");
 
     try {
+      setSaving(true);
+
       const res = await fetch(`${API_URL}/products/${editing.id}`, {
         method: "PUT",
         headers: {
@@ -71,19 +73,25 @@ function StockAdmin() {
           nombre: editing.nombre,
           descripcion: editing.descripcion,
           image_url: editing.image_url,
-          price: editing.price,
-          stock: editing.stock,
+          price: Number(editing.price),
+          stock: Number(editing.stock),
           catego: editing.catego,
           is_active: editing.is_active
         })
       });
 
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al guardar");
+      }
 
       setEditing(null);
       loadProducts();
-    } catch {
-      alert("Error al guardar cambios");
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -99,7 +107,6 @@ function StockAdmin() {
   // ======================
   return (
     <div className="stock-admin">
-
       <h2>📦 Administración de Stock</h2>
 
       <input
@@ -109,7 +116,7 @@ function StockAdmin() {
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {loading && <p>Cargando...</p>}
+      {loading && <p>Cargando productos...</p>}
 
       <table className="stock-table">
         <thead>
@@ -127,7 +134,7 @@ function StockAdmin() {
           {filteredProducts.map(p => (
             <tr key={p.id}>
               <td>{p.nombre}</td>
-              <td>${Number(p.price).toLocaleString("es-CL")}</td>
+              <td>${p.price.toLocaleString("es-CL")}</td>
               <td>{p.stock}</td>
               <td>{p.catego}</td>
               <td>{p.is_active ? "Activo" : "Inactivo"}</td>
@@ -147,7 +154,6 @@ function StockAdmin() {
       {editing && (
         <div className="modal-overlay">
           <div className="modal">
-
             <h3>Editar producto</h3>
 
             <input
@@ -166,7 +172,6 @@ function StockAdmin() {
               }
             />
 
-            {/* 👇 URL DE IMAGEN */}
             <input
               placeholder="URL de imagen"
               value={editing.image_url}
@@ -175,12 +180,11 @@ function StockAdmin() {
               }
             />
 
-            {/* Preview imagen */}
             {editing.image_url && (
               <img
                 src={editing.image_url}
                 alt="preview"
-                style={{ width: "100%", marginBottom: "10px" }}
+                style={{ width: "100%", marginBottom: 10 }}
               />
             )}
 
@@ -202,12 +206,14 @@ function StockAdmin() {
               }
             />
 
+            {/* 👇 CATEGORÍAS CORRECTAS */}
             <select
               value={editing.catego}
               onChange={e =>
                 setEditing({ ...editing, catego: e.target.value })
               }
             >
+              
               <option value="Gaming">Gaming</option>
               <option value="Computación">Computación</option>
               <option value="Componentes">Componentes</option>
@@ -227,10 +233,11 @@ function StockAdmin() {
             </label>
 
             <div className="modal-actions">
-              <button onClick={saveProduct}>💾 Guardar</button>
+              <button onClick={saveProduct} disabled={saving}>
+                {saving ? "Guardando..." : "💾 Guardar"}
+              </button>
               <button onClick={() => setEditing(null)}>Cancelar</button>
             </div>
-
           </div>
         </div>
       )}
