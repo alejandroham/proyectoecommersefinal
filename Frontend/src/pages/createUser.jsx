@@ -1,21 +1,26 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CreateUser = () => {
+  const { user } = useAuth(); // admin logueado
+
   // ======================
-  // DATOS DEL USUARIO
+  // DATOS
   // ======================
-  const [name, setName] = useState("");
+  const [nombres, setNombres] = useState("");
+  const [apellido, setApellido] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("sales");
+  const [telefono, setTelefono] = useState("");
+  const [role, setRole] = useState("buyer");
   const [password, setPassword] = useState("");
 
-  // ======================
-  // UI
-  // ======================
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // ======================
-  // REGLAS CONTRASEÑA
+  // REGLAS PASSWORD
   // ======================
   const passwordRules = {
     length: password.length >= 8,
@@ -28,7 +33,7 @@ const CreateUser = () => {
   // ======================
   // SUBMIT
   // ======================
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isValidPassword = Object.values(passwordRules).every(Boolean);
@@ -37,45 +42,73 @@ const CreateUser = () => {
       return;
     }
 
-    const newUser = {
-      name,
-      email,
-      password,
-      role,
-      active: true,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      setLoading(true);
 
-    // Demo
-    console.log("Usuario creado:", newUser);
-    alert("Usuario creado correctamente (demo)");
+      const token = localStorage.getItem("token");
 
-    // Reset
-    setName("");
-    setEmail("");
-    setPassword("");
-    setRole("sales");
+      const res = await fetch(`${API_URL}/users/admin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          nombres,
+          apellido,
+          telefono,
+          role,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al crear usuario");
+      }
+
+      alert("Usuario creado correctamente ✅");
+
+      // Reset
+      setNombres("");
+      setApellido("");
+      setEmail("");
+      setTelefono("");
+      setPassword("");
+      setRole("buyer");
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // ======================
+  // UI
+  // ======================
   return (
     <div className="register-container">
       <form className="register-box" onSubmit={handleSubmit}>
-        {/* ======================
-            HEADER
-        ====================== */}
-        <h2>Crear cuenta</h2>
+        <h2>Crear usuario</h2>
         <p className="subtitle">
-          Regístrate para comenzar a comprar
+          Panel administrador
         </p>
 
-        {/* ======================
-            INPUTS
-        ====================== */}
         <input
           type="text"
-          placeholder="Nombre completo"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="Nombres"
+          value={nombres}
+          onChange={(e) => setNombres(e.target.value)}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Apellido"
+          value={apellido}
+          onChange={(e) => setApellido(e.target.value)}
           required
         />
 
@@ -87,15 +120,19 @@ const CreateUser = () => {
           required
         />
 
+        <input
+          type="text"
+          placeholder="Teléfono"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+        />
+
         <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="buyer">Buyer</option>
           <option value="admin">Admin</option>
-          <option value="sales">Buyer</option>
-          
         </select>
 
-        {/* ======================
-            PASSWORD
-        ====================== */}
+        {/* PASSWORD */}
         <div className="password-field">
           <input
             type={showPassword ? "text" : "password"}
@@ -104,44 +141,20 @@ const CreateUser = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <span onClick={() => setShowPassword(!showPassword)}>
-            👁️
-          </span>
+          <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
         </div>
 
-        {/* ======================
-            REGLAS
-        ====================== */}
         <ul className="password-rules">
-          <li className={passwordRules.length ? "ok" : "error"}>
-            Mínimo 8 caracteres
-          </li>
-          <li className={passwordRules.upper ? "ok" : "error"}>
-            Una mayúscula
-          </li>
-          <li className={passwordRules.lower ? "ok" : "error"}>
-            Una minúscula
-          </li>
-          <li className={passwordRules.number ? "ok" : "error"}>
-            Un número
-          </li>
-          <li className={passwordRules.special ? "ok" : "error"}>
-            Un carácter especial
-          </li>
+          <li className={passwordRules.length ? "ok" : "error"}>Mínimo 8 caracteres</li>
+          <li className={passwordRules.upper ? "ok" : "error"}>Una mayúscula</li>
+          <li className={passwordRules.lower ? "ok" : "error"}>Una minúscula</li>
+          <li className={passwordRules.number ? "ok" : "error"}>Un número</li>
+          <li className={passwordRules.special ? "ok" : "error"}>Un carácter especial</li>
         </ul>
 
-        {/* ======================
-            CTA
-        ====================== */}
-        <button type="submit">Crear cuenta</button>
-
-        {/* ======================
-            FOOTER
-        ====================== */}
-        <div className="register-footer">
-          ¿Ya tienes cuenta?{" "}
-          <a href="/login">Inicia sesión</a>
-        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? "Creando..." : "Crear usuario"}
+        </button>
       </form>
     </div>
   );

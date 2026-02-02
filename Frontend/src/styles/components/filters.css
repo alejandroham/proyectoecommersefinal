@@ -3,15 +3,18 @@
 ================================ */
 
 .filters {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 28px 22px;
+  width: 240px;
+  background-color: #ffffff;
+  color: #0f172a;
 
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  padding: 28px 24px;
+  border-radius: 18px;
+
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
 
   position: sticky;
   top: 120px;
@@ -22,10 +25,19 @@
 ================================ */
 
 .filters h4 {
-  font-size: 1.1rem;
+  font-size: 16px;
   font-weight: 700;
-  color: #111827;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  color: inherit;
+}
+
+/* Separador visual sutil */
+.filters h4::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #e5e7eb;
+  margin-top: 10px;
 }
 
 /* ===============================
@@ -40,9 +52,9 @@
   border: 1px solid #d1d5db;
 
   background-color: #f9fafb;
-  font-size: 14px;
-  color: #111827;
+  color: inherit;
 
+  font-size: 14px;
   cursor: pointer;
   appearance: none;
 
@@ -50,6 +62,8 @@
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px;
+
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .filters select:focus {
@@ -59,12 +73,35 @@
 }
 
 /* ===============================
+   DARK MODE
+================================ */
+
+body.dark .filters {
+  background-color: #020617;
+  color: #e5e7eb;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+
+body.dark .filters h4::after {
+  background: #1f2933;
+}
+
+body.dark .filters select {
+  background-color: #020617;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
+}
+
+/* ===============================
    RESPONSIVE
 ================================ */
 
 @media (max-width: 768px) {
   .filters {
+    width: 100%;
     position: static;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
 }
