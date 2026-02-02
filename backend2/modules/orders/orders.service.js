@@ -172,3 +172,64 @@ export const checkout = async (user_id, shippingData) => {
     order_id: cart.orden_id
   };
 };
+import { pool } from "../../config/database.js";
+
+/**
+ * DASHBOARD ADMIN
+ */
+export const getDashboardStats = async () => {
+
+  const ventasHoy = await pool.query(`
+    SELECT COALESCE(SUM(total),0) AS total
+    FROM orders
+    WHERE DATE(created_at) = CURRENT_DATE
+    AND status = 'PAGADA'
+  `);
+
+  const ventasSemana = await pool.query(`
+    SELECT COALESCE(SUM(total),0) AS total
+    FROM orders
+    WHERE created_at >= NOW() - INTERVAL '7 days'
+    AND status = 'PAGADA'
+  `);
+
+  const ventasAnio = await pool.query(`
+    SELECT COALESCE(SUM(total),0) AS total
+    FROM orders
+    WHERE created_at >= NOW() - INTERVAL '1 year'
+    AND status = 'PAGADA'
+  `);
+
+  const productoMasVendido = await pool.query(`
+    SELECT p.nombre, SUM(oi.quantity) AS vendidos
+    FROM order_items oi
+    JOIN products p ON p.product_id = oi.product_id
+    GROUP BY p.nombre
+    ORDER BY vendidos DESC
+    LIMIT 1
+  `);
+
+  const productoMenosVendido = await pool.query(`
+    SELECT p.nombre, SUM(oi.quantity) AS vendidos
+    FROM order_items oi
+    JOIN products p ON p.product_id = oi.product_id
+    GROUP BY p.nombre
+    ORDER BY vendidos ASC
+    LIMIT 1
+  `);
+
+  const sinStock = await pool.query(`
+    SELECT product_id, nombre
+    FROM products
+    WHERE stock = 0
+  `);
+
+  return {
+    today: Number(ventasHoy.rows[0].total),
+    week: Number(ventasSemana.rows[0].total),
+    year: Number(ventasAnio.rows[0].total),
+    topProduct: productoMasVendido.rows[0] || null,
+    lowProduct: productoMenosVendido.rows[0] || null,
+    outOfStock: sinStock.rows
+  };
+};

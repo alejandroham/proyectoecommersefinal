@@ -18,6 +18,7 @@
 @import "./components/cards.css";
 @import "./components/forms.css";
 @import "./components/navbar.css"; 
+@import "./components/stockDashboard.css";
 
 /* =========================
    PAGES
@@ -31,3 +32,5 @@
 @import "./pages/orders.css";
 @import "./pages/register.css";
 @import "./pages/login.css";
+@import "./pages/createUser.css";
+@import "./pages/Stock.css";

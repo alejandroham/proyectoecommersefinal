@@ -1,0 +1,145 @@
+/* ===============================
+   CREATE USER (ADMIN)
+   =============================== */
+
+.register-container {
+  min-height: calc(100vh - 160px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px 20px;
+}
+
+.register-box {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.4s ease;
+}
+
+.register-box h2 {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 1.6rem;
+  color: #0f172a;
+}
+
+.register-box .subtitle {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 20px;
+}
+
+/* ===============================
+   INPUTS
+   =============================== */
+
+.register-box input,
+.register-box select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 14px;
+  font-size: 0.95rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.register-box input:focus,
+.register-box select:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+/* ===============================
+   PASSWORD FIELD
+   =============================== */
+
+.password-field {
+  position: relative;
+}
+
+.password-field span {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.6;
+}
+
+.password-field span:hover {
+  opacity: 1;
+}
+
+/* ===============================
+   PASSWORD RULES
+   =============================== */
+
+.password-rules {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 18px;
+  font-size: 0.85rem;
+}
+
+.password-rules li {
+  margin-bottom: 4px;
+}
+
+.password-rules .ok {
+  color: #16a34a;
+}
+
+.password-rules .error {
+  color: #dc2626;
+}
+
+/* ===============================
+   BUTTON
+   =============================== */
+
+.register-box button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.register-box button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
+}
+
+.register-box button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   ANIMATION
+   =============================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

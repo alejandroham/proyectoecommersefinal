@@ -58,3 +58,15 @@ export const checkout = async (req, res) => {
 
   res.json(result);
 };
+
+import * as ordersService from "./orders.service.js";
+
+export const getDashboard = async (req, res) => {
+  try {
+    const data = await ordersService.getDashboardStats();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener dashboard" });
+  }
+};

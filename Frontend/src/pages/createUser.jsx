@@ -6,11 +6,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 const CreateUser = () => {
   const { user } = useAuth(); // admin logueado
 
-  // ======================
-  // DATOS
-  // ======================
+
   const [nombres, setNombres] = useState("");
   const [apellido, setApellido] = useState("");
+  const [rut, setRut] = useState(""); 
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [role, setRole] = useState("buyer");
@@ -19,9 +18,23 @@ const CreateUser = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ======================
+
+  // SEGURIDAD UI
+
+  if (!user || user.role !== "admin") {
+    return (
+      <div className="register-container">
+        <div className="register-box">
+          <h2>No autorizado</h2>
+          <p>Esta sección es solo para administradores.</p>
+        </div>
+      </div>
+    );
+  }
+
+
   // REGLAS PASSWORD
-  // ======================
+
   const passwordRules = {
     length: password.length >= 8,
     upper: /[A-Z]/.test(password),
@@ -30,9 +43,9 @@ const CreateUser = () => {
     special: /[@$!%*?&#]/.test(password),
   };
 
-  // ======================
+
   // SUBMIT
-  // ======================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -73,6 +86,7 @@ const CreateUser = () => {
       // Reset
       setNombres("");
       setApellido("");
+      setRut("");
       setEmail("");
       setTelefono("");
       setPassword("");
@@ -85,16 +99,14 @@ const CreateUser = () => {
     }
   };
 
-  // ======================
+
   // UI
-  // ======================
+
   return (
     <div className="register-container">
       <form className="register-box" onSubmit={handleSubmit}>
         <h2>Crear usuario</h2>
-        <p className="subtitle">
-          Panel administrador
-        </p>
+        <p className="subtitle">Panel administrador</p>
 
         <input
           type="text"
@@ -110,6 +122,13 @@ const CreateUser = () => {
           value={apellido}
           onChange={(e) => setApellido(e.target.value)}
           required
+        />
+
+        <input
+          type="text"
+          placeholder="12.345.678-9"
+          value={rut}
+          onChange={(e) => setRut(e.target.value)}
         />
 
         <input

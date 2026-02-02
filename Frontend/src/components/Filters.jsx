@@ -1,8 +1,9 @@
 /**
  * Filters.jsx
- * Filtros simples:
- * - Categoría
+ * Filtros:
+ * - Categoría (URL)
  * - Precio
+ * - Stock
  */
 
 import { useSearchParams } from "react-router-dom";
@@ -13,7 +14,9 @@ function Filters({ filters, setFilters }) {
 
   const currentCategory = searchParams.get("cat") || "";
 
-  // Cambiar categoría (URL)
+  // ======================
+  // CATEGORÍA (URL)
+  // ======================
   const handleCategoryChange = (e) => {
     const value = e.target.value;
 
@@ -26,11 +29,23 @@ function Filters({ filters, setFilters }) {
     setSearchParams(searchParams);
   };
 
-  // Cambiar precio (estado local)
+  // ======================
+  // PRECIO
+  // ======================
   const handlePriceChange = (e) => {
     setFilters({
       ...filters,
-      price: e.target.value
+      price: e.target.value,
+    });
+  };
+
+  // ======================
+  // STOCK
+  // ======================
+  const handleStockChange = (e) => {
+    setFilters({
+      ...filters,
+      stock: e.target.value,
     });
   };
 
@@ -41,9 +56,9 @@ function Filters({ filters, setFilters }) {
       {/* CATEGORÍA */}
       <select value={currentCategory} onChange={handleCategoryChange}>
         <option value="">Todas las categorías</option>
-        <option value="gamer">Gaming</option>
-        <option value="Notebook">Computación</option>
-        <option value="components">Componentes</option>
+        <option value="gaming">Gaming</option>
+        <option value="computación">Computación</option>
+        <option value="componentes">Componentes</option>
         <option value="redes">Redes</option>
         <option value="hogar">Hogar</option>
       </select>
@@ -54,6 +69,13 @@ function Filters({ filters, setFilters }) {
         <option value="low">Menos de $500.000</option>
         <option value="mid">$500.000 - $800.000</option>
         <option value="high">Más de $800.000</option>
+      </select>
+
+      {/* STOCK */}
+      <select value={filters.stock || ""} onChange={handleStockChange}>
+        <option value="">Stock</option>
+        <option value="in_stock">Con stock</option>
+        <option value="out_stock">Sin stock</option>
       </select>
     </aside>
   );

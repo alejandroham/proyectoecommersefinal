@@ -5,9 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 
 function Cart() {
-  // ======================
   // CONTEXTOS
-  // ======================
   const {
     cart,
     removeFromCart,
@@ -19,23 +17,17 @@ function Cart() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // ======================
   // ESTADOS POPUPS
-  // ======================
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  // ======================
   // TOTAL
-  // ======================
   const total = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
-  // ======================
   // COMPRAR
-  // ======================
   const handlePurchase = () => {
   // Si no hay usuario
   if (!user) {

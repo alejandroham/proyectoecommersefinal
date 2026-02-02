@@ -1,0 +1,20 @@
+.product-card.out-stock {
+  opacity: 0.6;
+}
+
+.product-stock.ok {
+  color: #27ae60;
+  font-size: 0.9rem;
+}
+
+.product-stock.no {
+  color: #c0392b;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.btn-add:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
