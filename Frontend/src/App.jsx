@@ -1,39 +1,22 @@
-// React
+
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-
-// Layout
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
-// Páginas públicas
-import Home from "./pages/home";
-import Login from "./pages/login";
-import Register from "./pages/register";
-import Products from "./pages/products";
-import ProductDetail from "./pages/productdetail";
-import Cart from "./pages/cart";
-import Orders from "./pages/orders";
-
-// Páginas protegidas
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 import CreateUser from "./pages/CreateUser";
-import Stock from "./pages/stock";
-
-
-// Protección de rutas
+import Stock from "./pages/Stock";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
-
-// Contextos globales
 import { CartProvider } from "./context/CartContext";
 
-
-
-
 function App() {
-  // ==========================
-  // TEMA GLOBAL (dark / light)
-  // ==========================
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
@@ -60,7 +43,15 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>}/>
+
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
 
           {/* ======================
               RUTAS PROTEGIDAS
@@ -73,6 +64,7 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/stock"
             element={
