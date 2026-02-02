@@ -30,6 +30,12 @@ function StockSidebar({ activeView, setActiveView }) {
       >
         ✏️ Editar producto
       </button>
+          <button
+        className={activeView === "admin" ? "active" : ""}
+        onClick={() => setActiveView("admin")}
+      >
+        ✏️ Stock Admin
+      </button>
     </aside>
   );
 }

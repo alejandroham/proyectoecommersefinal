@@ -1,0 +1,49 @@
+.stock-admin {
+  padding: 2rem;
+}
+
+.stock-search {
+  padding: 8px;
+  width: 300px;
+  margin-bottom: 1rem;
+}
+
+.stock-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stock-table th,
+.stock-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #1f1f1f;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 420px;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}

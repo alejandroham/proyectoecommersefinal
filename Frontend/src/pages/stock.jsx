@@ -3,6 +3,9 @@ import "../styles/pages/stock.css";
 import StockSidebar from "../components/stock/StockSidebar";
 import StockList from "../components/stock/StockList";
 import StockDashboard from "../components/stock/StockDashboard";
+import StockAdd from "../components/stock/StockAdd";
+import StockEdit from "../components/stock/StockEdit";
+import StockAdmin from "../components/stock/StockAdmin";
 
 function Stock() {
   const [activeView, setActiveView] = useState("stock");
@@ -18,13 +21,11 @@ function Stock() {
 
         {activeView === "stock" && <StockList />}
 
-        {activeView === "add" && (
-          <h2>Añadir producto (pendiente)</h2>
-        )}
+        {activeView === "add" && <StockAdd />}
 
-        {activeView === "edit" && (
-          <h2>Editar producto (pendiente)</h2>
-        )}
+        {activeView === "edit" && <StockEdit />}
+
+        {activeView === "admin" && <StockAdmin />}
 
       </main>
     </div>

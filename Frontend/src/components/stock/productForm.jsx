@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -167,9 +167,11 @@ function ProductForm({ product, onClose, onSaved }) {
             onChange={handleChange}
           >
             <option value="">Seleccione categoría</option>
-            <option value="Notebook">Notebook</option>
-            <option value="Tablets">Tablets</option>
-            <option value="Telefonia">Telefonía</option>
+            <option value="Gaming">Gaming</option>
+            <option value="computación">computación</option>
+            <option value="componentes">componentes</option>
+            <option value="redes">redes</option>
+            <option value="Hogar">Hogar</option>
           </select>
 
           <div className="modal-actions">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ProductForm from "../components/ProductForm";
+import ProductForm from "./ProductForm";
 
 function StockAdd() {
   const [showForm, setShowForm] = useState(true);

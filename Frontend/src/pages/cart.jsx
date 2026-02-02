@@ -3,9 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-
 function Cart() {
-  // CONTEXTOS
   const {
     cart,
     removeFromCart,
@@ -17,154 +15,143 @@ function Cart() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // ESTADOS POPUPS
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-  // TOTAL
-  const total = cart.reduce(
+  // ======================
+  // CÁLCULOS (CHILE)
+  // ======================
+  const subtotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
+  const IVA_RATE = 0.19;
+  const SHIPPING_COST = cart.length > 0 ? 5000 : 0;
+
+  const iva = Math.round(subtotal * IVA_RATE);
+  const total = subtotal + iva + SHIPPING_COST;
+
+  // ======================
   // COMPRAR
+  // ======================
   const handlePurchase = () => {
-  // Si no hay usuario
-  if (!user) {
-    setShowLoginPopup(true);
-    return;
-  }
+    if (!user) {
+      setShowLoginPopup(true);
+      return;
+    }
 
-  // Si carrito vacío
-  if (cart.length === 0) return;
+    if (cart.length === 0) return;
 
-  // 🔑 Clave única por usuario
-  const storageKey = `orders_user_${user.id}`;
+    const storageKey = `orders_user_${user.id}`;
 
-  const newOrder = {
-    id: Date.now(),
-    items: cart,
-    total,
-    created_at: new Date().toISOString(),
+    const newOrder = {
+      id: Date.now(),
+      items: cart,
+      subtotal,
+      iva,
+      shipping: SHIPPING_COST,
+      total,
+      created_at: new Date().toISOString(),
+    };
+
+    const existingOrders =
+      JSON.parse(localStorage.getItem(storageKey)) || [];
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify([...existingOrders, newOrder])
+    );
+
+    clearCart();
+    setShowSuccess(true);
   };
-
-  const existingOrders =
-    JSON.parse(localStorage.getItem(storageKey)) || [];
-
-  localStorage.setItem(
-    storageKey,
-    JSON.stringify([...existingOrders, newOrder])
-  );
-
-  clearCart();
-  setShowSuccess(true);
-};
-
 
   return (
     <div className="cart-page">
       {/* ======================
-          COLUMNA IZQUIERDA
+          PRODUCTOS
       ====================== */}
       <div className="cart-products">
-        <h2>Tus Productos</h2>
+        <h2>Tus productos</h2>
 
         {cart.length === 0 && <p>El carrito está vacío</p>}
 
-        {cart.map((item) => (
+        {cart.map(item => (
           <div key={item.id} className="cart-item">
-            <div className="cart-item-image">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="cart-product-img"
-              />
-            </div>
+            <img src={item.image} alt={item.name} />
+            <strong>{item.name}</strong>
 
-            <div className="cart-item-info">
-              <strong>{item.name}</strong>
-            </div>
+            <span>
+              ${item.price.toLocaleString("es-CL")}
+            </span>
 
-            <div className="cart-item-price">
-              ${item.price}
-            </div>
-
-            <div className="cart-item-qty">
-              <button onClick={() => decreaseQuantity(item.id)}>-</button>
+            <div>
+              <button onClick={() => decreaseQuantity(item.id)}>−</button>
               <span>{item.quantity}</span>
               <button onClick={() => increaseQuantity(item.id)}>+</button>
             </div>
 
-            <div className="cart-item-remove">
-              <button onClick={() => removeFromCart(item.id)}>
-                Eliminar
-              </button>
-            </div>
+            <button onClick={() => removeFromCart(item.id)}>
+              Eliminar
+            </button>
           </div>
         ))}
-
-        <div className="cart-subtotal">
-          Subtotal: <strong>${total}</strong>
-        </div>
       </div>
 
       {/* ======================
-          COLUMNA DERECHA
+          RESUMEN
       ====================== */}
       <div className="cart-summary">
-        <h3>Summary ({cart.length} item)</h3>
+        <h3>Resumen de compra</h3>
 
         <div className="summary-row">
           <span>Subtotal</span>
-          <span>${total}</span>
+          <span>${subtotal.toLocaleString("es-CL")}</span>
         </div>
 
         <div className="summary-row">
-          <span>Shipping</span>
-          <span>-</span>
+          <span>IVA (19%)</span>
+          <span>${iva.toLocaleString("es-CL")}</span>
         </div>
 
         <div className="summary-row">
-          <span>Est. Taxes</span>
-          <span>-</span>
+          <span>Envío</span>
+          <span>${SHIPPING_COST.toLocaleString("es-CL")}</span>
         </div>
 
         <hr />
 
         <div className="summary-total">
-          <span>Total</span>
-          <span>${total}</span>
+          <strong>Total</strong>
+          <strong>${total.toLocaleString("es-CL")}</strong>
         </div>
 
-        <button className="checkout-btn" onClick={handlePurchase}>
+        <button
+          className="checkout-btn"
+          onClick={handlePurchase}
+          disabled={cart.length === 0}
+        >
           Comprar
         </button>
       </div>
 
       {/* ======================
-          POPUP COMPRA EXITOSA
+          POPUPS
       ====================== */}
       {showSuccess && (
         <div className="popup-overlay">
           <div className="popup success">
-            <h3>🎉 Compra exitosa</h3>
+            <h3>🎉 Compra realizada</h3>
             <p>Gracias por tu compra</p>
 
-            <button
-              onClick={() => {
-                setShowSuccess(false);
-                navigate("/orders");
-              }}
-            >
+            <button onClick={() => navigate("/orders")}>
               Ver mis pedidos
             </button>
           </div>
         </div>
       )}
 
-      {/* ======================
-          POPUP LOGIN
-      ====================== */}
       {showLoginPopup && (
         <div className="popup-overlay">
           <div className="popup">
@@ -175,10 +162,7 @@ function Cart() {
               Iniciar sesión
             </button>
 
-            <button
-              className="secondary"
-              onClick={() => setShowLoginPopup(false)}
-            >
+            <button onClick={() => setShowLoginPopup(false)}>
               Cancelar
             </button>
           </div>

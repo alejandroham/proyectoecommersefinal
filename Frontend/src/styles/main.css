@@ -19,6 +19,7 @@
 @import "./components/forms.css";
 @import "./components/navbar.css"; 
 @import "./components/stockDashboard.css";
+@import "./components/StockAdmin.css";
 
 /* =========================
    PAGES
