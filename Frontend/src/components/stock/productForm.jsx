@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
+import { CATEGORIAS_VALIDAS } from "../../utils/categories";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const CATEGORIAS_VALIDAS = [
-  "Gaming",
-  "Computación",
-  "Componentes",
-  "Redes",
-  "Hogar"
-];
-
-function ProductForm({ product, onSaved }) {
+function ProductForm({ product = null, onSaved }) {
   const token = localStorage.getItem("token");
 
   const [form, setForm] = useState({
@@ -53,11 +46,11 @@ function ProductForm({ product, onSaved }) {
   };
 
   // ======================
-  // VALIDACIONES
+  // VALIDACIONES FRONT
   // ======================
   const validate = () => {
     if (!form.nombre.trim()) return "El nombre es obligatorio";
-    if (form.nombre.length < 3) return "Nombre muy corto";
+    if (form.nombre.trim().length < 3) return "Nombre muy corto";
 
     if (!form.descripcion.trim())
       return "La descripción es obligatoria";
@@ -77,7 +70,7 @@ function ProductForm({ product, onSaved }) {
       return "Imagen debe ser una URL válida (jpg, png, webp)";
 
     if (!CATEGORIAS_VALIDAS.includes(form.catego))
-      return "Categoría no válida";
+      return "Seleccione una categoría válida";
 
     return null;
   };
@@ -114,17 +107,19 @@ function ProductForm({ product, onSaved }) {
           price: Number(form.price),
           stock: Number(form.stock),
           image_url: form.image_url.trim(),
-          catego: form.catego
+          catego: form.catego // 👈 valor canónico
         })
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Error backend");
+        throw new Error(data.error || "Error al crear producto");
       }
 
-      onSaved();
+      onSaved?.();
 
+      // limpiar formulario
       setForm({
         nombre: "",
         descripcion: "",
@@ -133,8 +128,9 @@ function ProductForm({ product, onSaved }) {
         image_url: "",
         catego: ""
       });
+
     } catch (err) {
-      setError(err.message || "Error al crear producto");
+      setError(err.message);
     } finally {
       setSaving(false);
     }

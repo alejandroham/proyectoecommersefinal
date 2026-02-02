@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { CATEGORIAS_VALIDAS } from "../../utils/categories";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+// Normalización defensiva (igual que backend)
+const normalize = (str) =>
+  str
+    ?.trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 
 function StockAdmin() {
   const { user } = useAuth();
@@ -66,6 +75,18 @@ function StockAdmin() {
     setSavingId(product.product_id);
 
     try {
+      // 🔑 asegurar categoría canónica
+      const normalized = normalize(product.catego);
+      const index = CATEGORIAS_VALIDAS
+        .map(normalize)
+        .indexOf(normalized);
+
+      if (index === -1) {
+        throw new Error("Categoría no válida");
+      }
+
+      const categoriaCanonica = CATEGORIAS_VALIDAS[index];
+
       const res = await fetch(
         `${API_URL}/products/${product.product_id}`,
         {
@@ -75,18 +96,21 @@ function StockAdmin() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            nombre: product.nombre,
-            descripcion: product.descripcion,
-            image_url: product.image_url,
+            nombre: product.nombre.trim(),
+            descripcion: product.descripcion?.trim(),
+            image_url: product.image_url?.trim(),
             price: Number(product.price),
             stock: Number(product.stock),
-            catego: product.catego,
+            catego: categoriaCanonica, // 👈 SIEMPRE válida
             is_active: product.is_active,
           }),
         }
       );
 
-      if (!res.ok) throw new Error("Error al guardar");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Error al guardar");
+      }
 
       const updated = await res.json();
 
@@ -165,14 +189,12 @@ function StockAdmin() {
 
             return (
               <tr key={p.product_id}>
-                {/* IMAGEN */}
                 <td>
                   {editing ? (
                     <div className="image-edit">
                       <input
                         type="text"
                         value={p.image_url || ""}
-                        placeholder="URL imagen"
                         onChange={e =>
                           handleChange(
                             p.product_id,
@@ -200,7 +222,6 @@ function StockAdmin() {
                   )}
                 </td>
 
-                {/* NOMBRE */}
                 <td>
                   {editing ? (
                     <input
@@ -218,7 +239,6 @@ function StockAdmin() {
                   )}
                 </td>
 
-                {/* PRECIO */}
                 <td>
                   {editing ? (
                     <input
@@ -237,7 +257,6 @@ function StockAdmin() {
                   )}
                 </td>
 
-                {/* STOCK */}
                 <td>
                   {editing ? (
                     <input
@@ -256,7 +275,6 @@ function StockAdmin() {
                   )}
                 </td>
 
-                {/* CATEGORÍA */}
                 <td>
                   {editing ? (
                     <select
@@ -269,18 +287,17 @@ function StockAdmin() {
                         )
                       }
                     >
-                      <option value="Gaming">Gaming</option>
-                      <option value="Computación">Computación</option>
-                      <option value="Componentes">Componentes</option>
-                      <option value="Redes">Redes</option>
-                      <option value="Hogar">Hogar</option>
+                      {CATEGORIAS_VALIDAS.map(cat => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
                     </select>
                   ) : (
                     p.catego
                   )}
                 </td>
 
-                {/* ACTIVO */}
                 <td className="center">
                   {editing ? (
                     <input
@@ -301,7 +318,6 @@ function StockAdmin() {
                   )}
                 </td>
 
-                {/* ACCIONES */}
                 <td className="actions">
                   {editing ? (
                     <>

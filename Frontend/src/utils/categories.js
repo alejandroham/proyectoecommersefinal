@@ -1,7 +1,8 @@
-// utils/categories.js
+// src/utils/categories.js
+
 export const CATEGORIAS_VALIDAS = [
-  "Computacion",
   "Gaming",
+  "Computación",
   "Componentes",
   "Redes",
   "Hogar"
