@@ -1,141 +1,98 @@
 import { useEffect, useState } from "react";
-import "../../styles/components/stockDashboard.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function StockDashboard() {
-  const [stats, setStats] = useState({
-    todaySales: 0,
-    weekSales: 0,
-    yearSales: 0,
-    totalOrders: 0,
-    topProduct: null,
-    lowProduct: null,
-    outOfStock: [],
-  });
-
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadDashboard = async () => {
+    const fetchDashboard = async () => {
       try {
-        setLoading(true);
+        const token = localStorage.getItem("token");
 
-        // 🔹 Productos (para stock / sin stock)
-        const productsRes = await fetch(`${API_URL}/products`);
-        const products = await productsRes.json();
-
-        const outOfStock = products.filter(p => p.stock === 0);
-
-        // 🔹 Ventas (si aún no existe la API, fallback)
-        let salesData = {
-          today: 0,
-          week: 0,
-          year: 0,
-          orders: 0,
-          top: null,
-          low: null,
-        };
-
-        try {
-          const salesRes = await fetch(`${API_URL}/orders/stats`);
-          if (salesRes.ok) {
-            salesData = await salesRes.json();
+        const res = await fetch(`${API_URL}/orders/dashboard`, {
+          headers: {
+            Authorization: `Bearer ${token}`
           }
-        } catch {
-          // fallback silencioso
-        }
-
-        setStats({
-          todaySales: salesData.today,
-          weekSales: salesData.week,
-          yearSales: salesData.year,
-          totalOrders: salesData.orders,
-          topProduct: salesData.top,
-          lowProduct: salesData.low,
-          outOfStock,
         });
 
-      } catch (error) {
-        console.error("Error cargando dashboard", error);
+        if (!res.ok) {
+          throw new Error("No se pudo cargar el dashboard");
+        }
+
+        const data = await res.json();
+        setStats(data);
+
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    loadDashboard();
+    fetchDashboard();
   }, []);
 
-  if (loading) {
-    return <p>Cargando dashboard...</p>;
-  }
+  if (loading) return <p>Cargando dashboard...</p>;
+  if (error) return <p className="error">{error}</p>;
 
   return (
-    <div className="dashboard">
+    <div className="dashboard-grid">
 
-      <h2>📊 Dashboard de Ventas</h2>
-
-      {/* ================= KPIs ================= */}
-      <div className="dashboard-cards">
-        <div className="card">
-          <span>Ventas Hoy</span>
-          <strong>${stats.todaySales.toLocaleString()}</strong>
-        </div>
-
-        <div className="card">
-          <span>Ventas Semana</span>
-          <strong>${stats.weekSales.toLocaleString()}</strong>
-        </div>
-
-        <div className="card">
-          <span>Ventas Año</span>
-          <strong>${stats.yearSales.toLocaleString()}</strong>
-        </div>
-
-        <div className="card">
-          <span>Órdenes</span>
-          <strong>{stats.totalOrders}</strong>
-        </div>
+      {/* Ventas */}
+      <div className="dashboard-card">
+        <h4>💰 Ventas Hoy</h4>
+        <p>${stats.today.toLocaleString()}</p>
       </div>
 
-      {/* ================= PRODUCTOS ================= */}
-      <div className="dashboard-grid">
-
-        <div className="panel">
-          <h4>🔥 Producto más vendido</h4>
-          {stats.topProduct ? (
-            <p>{stats.topProduct.nombre}</p>
-          ) : (
-            <p className="muted">Sin datos</p>
-          )}
-        </div>
-
-        <div className="panel">
-          <h4>🐢 Producto menos vendido</h4>
-          {stats.lowProduct ? (
-            <p>{stats.lowProduct.nombre}</p>
-          ) : (
-            <p className="muted">Sin datos</p>
-          )}
-        </div>
-
-        <div className="panel">
-          <h4>🚨 Productos sin stock</h4>
-
-          {stats.outOfStock.length === 0 ? (
-            <p className="ok">Todos con stock</p>
-          ) : (
-            <ul>
-              {stats.outOfStock.map(p => (
-                <li key={p.product_id}>
-                  {p.nombre}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
+      <div className="dashboard-card">
+        <h4>📅 Últimos 7 días</h4>
+        <p>${stats.week.toLocaleString()}</p>
       </div>
+
+      <div className="dashboard-card">
+        <h4>📈 Último año</h4>
+        <p>${stats.year.toLocaleString()}</p>
+      </div>
+
+      {/* Productos */}
+      <div className="dashboard-card">
+        <h4>🔥 Más vendido</h4>
+        {stats.topProduct ? (
+          <p>
+            {stats.topProduct.nombre} ({stats.topProduct.vendidos})
+          </p>
+        ) : (
+          <p>Sin datos</p>
+        )}
+      </div>
+
+      <div className="dashboard-card">
+        <h4>🐢 Menos vendido</h4>
+        {stats.lowProduct ? (
+          <p>
+            {stats.lowProduct.nombre} ({stats.lowProduct.vendidos})
+          </p>
+        ) : (
+          <p>Sin datos</p>
+        )}
+      </div>
+
+      <div className="dashboard-card">
+        <h4>❌ Sin stock</h4>
+        {stats.outOfStock.length === 0 ? (
+          <p>Todos con stock</p>
+        ) : (
+          <ul>
+            {stats.outOfStock.map(p => (
+              <li key={p.product_id}>{p.nombre}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
     </div>
   );
 }
