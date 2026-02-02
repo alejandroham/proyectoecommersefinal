@@ -9,9 +9,8 @@ export const MENUS = {
   ],
 
   admin: [
-    { label: "Productos", icon: "📦", path: "/productos" },
-    { label: "Stock", icon: "📦", path: "/products" },
+    { label: "Productos", icon: "📦", path: "/products" },
+    { label: "Ver stock", icon: "📦", path: "/stock" },
     { label: "Usuarios", icon: "👤", path: "/createUser" },
-    { label: "Dasboard", icon: "💰", path: "/dashboard" },
   ],
 };

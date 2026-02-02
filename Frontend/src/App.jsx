@@ -17,6 +17,8 @@ import Orders from "./pages/orders";
 
 // Páginas protegidas
 import CreateUser from "./pages/CreateUser";
+import Stock from "./pages/stock";
+
 
 // Protección de rutas
 import Profile from "./pages/Profile";
@@ -68,6 +70,14 @@ function App() {
             element={
               <PrivateRoute roles={["admin"]}>
                 <CreateUser />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/stock"
+            element={
+              <PrivateRoute roles={["admin"]}>
+                <Stock />
               </PrivateRoute>
             }
           />
