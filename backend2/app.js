@@ -6,23 +6,18 @@ import { logger } from "./middlewares/logger.js";
 
 const app = express();
 
+app.use(cors({
+  origin: "https://proyectoecommersefinal.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5175",
-      "https://tu-frontend.vercel.app"
-    ],
-    credentials: true
-  })
-);
 
 
 app.use(express.json());
 app.use(logger);
 
-
+app.use(cors());
 registerRoutes(app);
 
 export default app;
