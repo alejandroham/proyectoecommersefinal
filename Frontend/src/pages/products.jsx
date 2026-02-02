@@ -3,13 +3,13 @@
  * - Vista principal del catálogo
  * - Conecta con backend (Render / Local vía ENV)
  * - Aplica filtros
- * - Renderiza productos
+ * - Filtra por categoría desde la URL (?cat=...)
  */
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
-
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,13 +20,17 @@ function Products() {
   // Productos filtrados
   const [filtered, setFiltered] = useState([]);
 
-  // Estado de filtros
+  // Filtros locales
   const [filters, setFilters] = useState({
     price: "",
     brand: "",
     memory: "",
     storage: ""
   });
+
+  // 🔎 Categoría desde la URL (?cat=gaming, redes, etc.)
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get("cat");
 
   // ======================
   // OBTENER PRODUCTOS
@@ -42,15 +46,11 @@ function Products() {
 
         const data = await res.json();
 
-        // 🛡️ Protección por si el backend cambia el formato
+        // Protección por formato backend
         const list = Array.isArray(data) ? data : data.products;
+        if (!Array.isArray(list)) return;
 
-        if (!Array.isArray(list)) {
-          console.error("Formato inesperado de productos:", data);
-          return;
-        }
-
-        // Adaptamos al formato del frontend
+        // Adaptación frontend
         const adaptedProducts = list.map(p => ({
           id: p.product_id,
           name: p.nombre,
@@ -62,6 +62,7 @@ function Products() {
 
         setProducts(adaptedProducts);
         setFiltered(adaptedProducts);
+
       } catch (error) {
         console.error("Error cargando productos:", error);
       }
@@ -75,6 +76,14 @@ function Products() {
   // ======================
   useEffect(() => {
     let result = [...products];
+
+    if (categoryFromUrl) {
+      result = result.filter(
+        p =>
+          p.category &&
+          p.category.toLowerCase() === categoryFromUrl.toLowerCase()
+      );
+    }
 
     if (filters.brand)
       result = result.filter(p => p.brand === filters.brand);
@@ -97,7 +106,7 @@ function Products() {
       result = result.filter(p => p.price > 800000);
 
     setFiltered(result);
-  }, [filters, products]);
+  }, [filters, products, categoryFromUrl]);
 
   return (
     <div className="products-layout">

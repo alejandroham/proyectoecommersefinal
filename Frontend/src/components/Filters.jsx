@@ -1,16 +1,36 @@
 /**
  * Filters.jsx
- * - Maneja los filtros del catálogo
- * - No filtra directamente: solo informa al padre
+ * Filtros simples:
+ * - Categoría
+ * - Precio
  */
 
-function Filters({ filters, setFilters }) {
+import { useSearchParams } from "react-router-dom";
+import "../styles/components/filters.css";
 
-  // Actualiza cualquier filtro dinámicamente
-  const handleChange = (e) => {
+function Filters({ filters, setFilters }) {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentCategory = searchParams.get("cat") || "";
+
+  // Cambiar categoría (URL)
+  const handleCategoryChange = (e) => {
+    const value = e.target.value;
+
+    if (!value) {
+      searchParams.delete("cat");
+    } else {
+      searchParams.set("cat", value);
+    }
+
+    setSearchParams(searchParams);
+  };
+
+  // Cambiar precio (estado local)
+  const handlePriceChange = (e) => {
     setFilters({
       ...filters,
-      [e.target.name]: e.target.value
+      price: e.target.value
     });
   };
 
@@ -18,34 +38,22 @@ function Filters({ filters, setFilters }) {
     <aside className="filters">
       <h4>Filtros</h4>
 
+      {/* CATEGORÍA */}
+      <select value={currentCategory} onChange={handleCategoryChange}>
+        <option value="">Todas las categorías</option>
+        <option value="gamer">Gaming</option>
+        <option value="Notebook">Computación</option>
+        <option value="components">Componentes</option>
+        <option value="redes">Redes</option>
+        <option value="hogar">Hogar</option>
+      </select>
+
       {/* PRECIO */}
-      <select name="price" onChange={handleChange}>
+      <select value={filters.price} onChange={handlePriceChange}>
         <option value="">Precio</option>
-        <option value="low">Menor a $500.000</option>
+        <option value="low">Menos de $500.000</option>
         <option value="mid">$500.000 - $800.000</option>
-        <option value="high">Mayor a $800.000</option>
-      </select>
-
-      {/* MARCA */}
-      <select name="brand" onChange={handleChange}>
-        <option value="">Marca</option>
-        <option value="Lenovo">Lenovo</option>
-        <option value="HP">HP</option>
-        <option value="Apple">Apple</option>
-      </select>
-
-      {/* MEMORIA */}
-      <select name="memory" onChange={handleChange}>
-        <option value="">Memoria</option>
-        <option value="8GB">8GB</option>
-        <option value="16GB">16GB</option>
-      </select>
-
-      {/* ALMACENAMIENTO */}
-      <select name="storage" onChange={handleChange}>
-        <option value="">Almacenamiento</option>
-        <option value="256GB">256GB</option>
-        <option value="512GB">512GB</option>
+        <option value="high">Más de $800.000</option>
       </select>
     </aside>
   );
