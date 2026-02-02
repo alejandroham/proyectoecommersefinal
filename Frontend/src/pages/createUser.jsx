@@ -4,60 +4,59 @@ import { useAuth } from "../context/AuthContext";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CreateUser = () => {
-  const { user } = useAuth(); // admin logueado
+  const { user } = useAuth();
 
-
-  const [nombres, setNombres] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [rut, setRut] = useState(""); 
-  const [email, setEmail] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [role, setRole] = useState("buyer");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState({
+    nombres: "",
+    apellido: "",
+    rut: "",
+    email: "",
+    telefono: "",
+    role: "buyer",
+    password: ""
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
-  // SEGURIDAD UI
-
   if (!user || user.role !== "admin") {
     return (
-      <div className="register-container">
-        <div className="register-box">
-          <h2>No autorizado</h2>
-          <p>Esta sección es solo para administradores.</p>
+      <div className="profile-page">
+        <div className="profile-container">
+          <div className="profile-right">
+            <h2>No autorizado</h2>
+            <p>Esta sección es solo para administradores.</p>
+          </div>
         </div>
       </div>
     );
   }
 
-
-  // REGLAS PASSWORD
-
   const passwordRules = {
-    length: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /\d/.test(password),
-    special: /[@$!%*?&#]/.test(password),
+    length: form.password.length >= 8,
+    upper: /[A-Z]/.test(form.password),
+    lower: /[a-z]/.test(form.password),
+    number: /\d/.test(form.password),
+    special: /[@$!%*?&#]/.test(form.password),
   };
 
-
-  // SUBMIT
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isValidPassword = Object.values(passwordRules).every(Boolean);
-    if (!isValidPassword) {
+    if (!Object.values(passwordRules).every(Boolean)) {
       alert("La contraseña no cumple con los requisitos");
       return;
     }
 
     try {
       setLoading(true);
-
       const token = localStorage.getItem("token");
 
       const res = await fetch(`${API_URL}/users/admin`, {
@@ -66,14 +65,7 @@ const CreateUser = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          email,
-          password,
-          nombres,
-          apellido,
-          telefono,
-          role,
-        }),
+        body: JSON.stringify(form),
       });
 
       if (!res.ok) {
@@ -83,98 +75,143 @@ const CreateUser = () => {
 
       alert("Usuario creado correctamente ✅");
 
-      // Reset
-      setNombres("");
-      setApellido("");
-      setRut("");
-      setEmail("");
-      setTelefono("");
-      setPassword("");
-      setRole("buyer");
+      setForm({
+        nombres: "",
+        apellido: "",
+        rut: "",
+        email: "",
+        telefono: "",
+        role: "buyer",
+        password: ""
+      });
 
-    } catch (error) {
-      alert(error.message);
+    } catch (err) {
+      alert(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-
-  // UI
-
   return (
-    <div className="register-container">
-      <form className="register-box" onSubmit={handleSubmit}>
-        <h2>Crear usuario</h2>
-        <p className="subtitle">Panel administrador</p>
+    <div className="profile-page">
+      <div className="profile-container">
 
-        <input
-          type="text"
-          placeholder="Nombres"
-          value={nombres}
-          onChange={(e) => setNombres(e.target.value)}
-          required
-        />
+        {/* LEFT PANEL */}
+        <div className="profile-left">
+          <div className="profile-avatar">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+              alt="Nuevo usuario"
+            />
+          </div>
 
-        <input
-          type="text"
-          placeholder="Apellido"
-          value={apellido}
-          onChange={(e) => setApellido(e.target.value)}
-          required
-        />
+          <div className="profile-name">Nuevo usuario</div>
 
-        <input
-          type="text"
-          placeholder="12.345.678-9"
-          value={rut}
-          onChange={(e) => setRut(e.target.value)}
-        />
-
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Teléfono"
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-        />
-
-        <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="buyer">Buyer</option>
-          <option value="admin">Admin</option>
-        </select>
-
-        {/* PASSWORD */}
-        <div className="password-field">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
+          <span className="profile-role">
+            Creación de cuenta
+          </span>
         </div>
 
-        <ul className="password-rules">
-          <li className={passwordRules.length ? "ok" : "error"}>Mínimo 8 caracteres</li>
-          <li className={passwordRules.upper ? "ok" : "error"}>Una mayúscula</li>
-          <li className={passwordRules.lower ? "ok" : "error"}>Una minúscula</li>
-          <li className={passwordRules.number ? "ok" : "error"}>Un número</li>
-          <li className={passwordRules.special ? "ok" : "error"}>Un carácter especial</li>
-        </ul>
+        {/* RIGHT PANEL */}
+        <div className="profile-right">
+          <h2>Crear usuario</h2>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Creando..." : "Crear usuario"}
-        </button>
-      </form>
+          <form className="profile-form" onSubmit={handleSubmit}>
+
+            <div>
+              <label>Nombres</label>
+              <input
+                name="nombres"
+                value={form.nombres}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Apellido</label>
+              <input
+                name="apellido"
+                value={form.apellido}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label>RUT</label>
+              <input
+                name="rut"
+                value={form.rut}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Correo</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div>
+              <label>Teléfono</label>
+              <input
+                name="telefono"
+                value={form.telefono}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label>Rol</label>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+              >
+                <option value="buyer">Buyer</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div className="full">
+              <label>Contraseña</label>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+          </form>
+
+          <ul className="password-rules">
+            <li className={passwordRules.length ? "ok" : "error"}>Mínimo 8 caracteres</li>
+            <li className={passwordRules.upper ? "ok" : "error"}>Una mayúscula</li>
+            <li className={passwordRules.lower ? "ok" : "error"}>Una minúscula</li>
+            <li className={passwordRules.number ? "ok" : "error"}>Un número</li>
+            <li className={passwordRules.special ? "ok" : "error"}>Un carácter especial</li>
+          </ul>
+
+          <div className="profile-actions">
+            <button
+              className="btn-save"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Creando..." : "Crear usuario"}
+            </button>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 };

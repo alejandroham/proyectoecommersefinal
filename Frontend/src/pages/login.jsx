@@ -1,15 +1,28 @@
 import { useState } from "react";
+import {
+  useNavigate,
+  Link,
+  Navigate,
+  useLocation
+} from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-
 
 function Login() {
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
+  // mientras se reconstruye sesión
+  if (loading) return null;
+
+  // si ya está logueado, quedarse donde está
+  if (user) {
+    return <Navigate to={location.state?.from?.pathname || "/"} replace />;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,8 +30,13 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate("/");
-    } catch  {
+
+      // 👇 volver a la ruta original
+      const redirectTo =
+        location.state?.from?.pathname || "/";
+
+      navigate(redirectTo, { replace: true });
+    } catch {
       setError("Correo o contraseña incorrectos");
     }
   };
@@ -27,9 +45,6 @@ function Login() {
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
         <h2>Iniciar sesión</h2>
-        <p className="login-subtitle">
-          Accede a tu cuenta para continuar
-        </p>
 
         {error && <div className="login-error">{error}</div>}
 

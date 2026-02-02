@@ -2,7 +2,7 @@
 
 export const CATEGORIAS_VALIDAS = [
   "Gaming",
-  "Computación",
+  "Computacion",
   "Componentes",
   "Redes",
   "Hogar"
