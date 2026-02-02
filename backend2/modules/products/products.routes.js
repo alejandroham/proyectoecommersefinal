@@ -4,7 +4,6 @@ import {
   getProduct,
   createProduct,
   updateProduct,
-  updateStock,
   enableProduct,
   disableProduct,
   deleteProduct,
@@ -24,7 +23,6 @@ router.get("/:id", getProduct);
 // Vendor / Admin
 router.post("/", validarToken, autorizar(["vendor", "admin"]), createProduct);
 router.put("/:id", validarToken, autorizar(["vendor", "admin"]), updateProduct);
-router.put("/:id/stock", validarToken, autorizar(["vendor", "admin"]), updateStock);
 
 // Admin
 router.put("/:id/enable", validarToken, autorizar(["admin"]), enableProduct);

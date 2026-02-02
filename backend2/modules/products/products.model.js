@@ -1,16 +1,12 @@
 import { pool } from "../../config/database.js";
 
 /**
- * Obtener todos los productos activos
+ * Obtener todos los productos
+ * (admin verá activos e inactivos)
  */
-export const findAllActive = async () => {
+export const findAll = async () => {
   const { rows } = await pool.query(
-    `
-    SELECT *
-    FROM products
-    WHERE is_active = true
-    ORDER BY product_id
-    `
+    `SELECT * FROM products ORDER BY product_id`
   );
   return rows;
 };
@@ -20,11 +16,7 @@ export const findAllActive = async () => {
  */
 export const findById = async (id) => {
   const { rows } = await pool.query(
-    `
-    SELECT *
-    FROM products
-    WHERE product_id = $1
-    `,
+    `SELECT * FROM products WHERE product_id = $1`,
     [id]
   );
   return rows[0];
@@ -44,11 +36,11 @@ export const create = async (data) => {
     `,
     [
       data.nombre,
-      data.descripcion ?? null,
-      data.image_url ?? null,
+      data.descripcion,
+      data.image_url,
       data.price,
-      data.stock ?? 0,
-      data.catego ?? "Notebook",
+      data.stock,
+      data.catego,
       data.is_active ?? true
     ]
   );
@@ -57,28 +49,27 @@ export const create = async (data) => {
 };
 
 /**
- * Actualizar producto
+ * Actualizar producto completo
  */
 export const update = async (id, data) => {
   const { rows } = await pool.query(
     `
     UPDATE products
-    SET
-      nombre = $1,
-      descripcion = $2,
-      image_url = $3,
-      price = $4,
-      stock = $5,
-      catego = $6,
-      is_active = $7,
-      updated_at = NOW()
+    SET nombre = $1,
+        descripcion = $2,
+        image_url = $3,
+        price = $4,
+        stock = $5,
+        catego = $6,
+        is_active = $7,
+        updated_at = NOW()
     WHERE product_id = $8
     RETURNING *
     `,
     [
       data.nombre,
-      data.descripcion ?? null,
-      data.image_url ?? null,
+      data.descripcion,
+      data.image_url,
       data.price,
       data.stock,
       data.catego,
@@ -91,44 +82,26 @@ export const update = async (id, data) => {
 };
 
 /**
- * Obtener producto con lock (evita ventas dobles)
- * Se usa dentro de una transacción
+ * Activar / desactivar producto
  */
-export const findByIdForUpdate = async (product_id, client) => {
-  const { rows } = await client.query(
+export const setActive = async (id, isActive) => {
+  await pool.query(
     `
-    SELECT *
-    FROM products
-    WHERE product_id = $1
-    FOR UPDATE
+    UPDATE products
+    SET is_active = $1,
+        updated_at = NOW()
+    WHERE product_id = $2
     `,
-    [product_id]
+    [isActive, id]
   );
-  return rows[0];
 };
 
 /**
- * Descontar stock (con validación)
+ * Eliminar producto
  */
-export const discountStock = async (product_id, qty, client) => {
-  const { rowCount } = await client.query(
-    `
-    UPDATE products
-    SET stock = stock - $1
-    WHERE product_id = $2
-      AND stock >= $1
-    `,
-    [qty, product_id]
+export const remove = async (id) => {
+  await pool.query(
+    `DELETE FROM products WHERE product_id = $1`,
+    [id]
   );
-
-  if (rowCount === 0) {
-    throw new Error("Stock insuficiente");
-  }
-};
-
-export const findAll = async () => {
-  const { rows } = await pool.query(
-    "SELECT * FROM products ORDER BY product_id"
-  );
-  return rows;
 };

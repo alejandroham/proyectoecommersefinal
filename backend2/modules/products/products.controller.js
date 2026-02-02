@@ -1,19 +1,15 @@
 import * as ProductService from "./products.service.js";
 
 /**
- * Catálogo público (solo activos)
+ * GET /products
  */
 export const getProducts = async (req, res) => {
-  try {
-    const products = await ProductService.listarProductos();
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const products = await ProductService.listarProductos();
+  res.json(products);
 };
 
 /**
- * Obtener producto por ID
+ * GET /products/:id
  */
 export const getProduct = async (req, res) => {
   try {
@@ -25,7 +21,7 @@ export const getProduct = async (req, res) => {
 };
 
 /**
- * Crear producto (admin)
+ * POST /products
  */
 export const createProduct = async (req, res) => {
   try {
@@ -37,7 +33,7 @@ export const createProduct = async (req, res) => {
 };
 
 /**
- * Actualizar producto (admin)
+ * PUT /products/:id
  */
 export const updateProduct = async (req, res) => {
   try {
@@ -45,29 +41,6 @@ export const updateProduct = async (req, res) => {
       req.params.id,
       req.body
     );
-
-    res.json(product); // 🔥 IMPORTANTE: devolver el producto
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-/**
- * Actualizar solo stock (admin)
- */
-export const updateStock = async (req, res) => {
-  try {
-    const { stock } = req.body;
-
-    if (!Number.isInteger(stock) || stock < 0) {
-      return res.status(400).json({ error: "Stock inválido" });
-    }
-
-    const product = await ProductService.actualizarProducto(
-      req.params.id,
-      { stock }
-    );
-
     res.json(product);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -75,46 +48,32 @@ export const updateStock = async (req, res) => {
 };
 
 /**
- * Activar producto (admin)
+ * PUT /products/:id/enable
  */
 export const enableProduct = async (req, res) => {
-  try {
-    const product = await ProductService.actualizarProducto(
-      req.params.id,
-      { is_active: true }
-    );
-
-    res.json(product);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+  await ProductService.cambiarEstado(req.params.id, true);
+  res.sendStatus(204);
 };
 
 /**
- * Desactivar producto (admin)
+ * PUT /products/:id/disable
  */
 export const disableProduct = async (req, res) => {
-  try {
-    const product = await ProductService.actualizarProducto(
-      req.params.id,
-      { is_active: false }
-    );
-
-    res.json(product);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+  await ProductService.cambiarEstado(req.params.id, false);
+  res.sendStatus(204);
 };
 
 /**
- * Categorías válidas
+ * DELETE /products/:id
+ */
+export const deleteProduct = async (req, res) => {
+  await ProductService.eliminarProducto(req.params.id);
+  res.sendStatus(204);
+};
+
+/**
+ * GET /products/meta/categories
  */
 export const getCategorias = (req, res) => {
-  res.json([
-    "Gaming",
-    "Computación",
-    "Componentes",
-    "Redes",
-    "Hogar"
-  ]);
+  res.json(CATEGORIAS_VALIDAS);
 };

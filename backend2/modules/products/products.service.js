@@ -1,9 +1,7 @@
 import * as ProductModel from "./products.model.js";
 import { CATEGORIAS_VALIDAS } from "../../utils/categories.js";
 
-/**
- * Validar categoría
- */
+// Validar categoría
 const validarCategoria = (catego) => {
   if (!CATEGORIAS_VALIDAS.includes(catego)) {
     throw new Error("Categoría no válida");
@@ -11,27 +9,18 @@ const validarCategoria = (catego) => {
 };
 
 /**
- * Listado público (solo activos)
+ * Listar productos
  */
 export const listarProductos = async () => {
-  return ProductModel.findAllActive();
+  return ProductModel.findAll();
 };
 
 /**
- * Listado admin (todos)
- */
-export const listarProductosAdmin = async () => {
-  return ProductModel.findAll(); // 👉 debes tener esta función en el model
-};
-
-/**
- * Obtener producto por ID
+ * Obtener producto
  */
 export const obtenerProducto = async (id) => {
   const product = await ProductModel.findById(id);
-  if (!product) {
-    throw new Error("Producto no encontrado");
-  }
+  if (!product) throw new Error("Producto no encontrado");
   return product;
 };
 
@@ -40,14 +29,6 @@ export const obtenerProducto = async (id) => {
  */
 export const crearProducto = async (data) => {
   validarCategoria(data.catego);
-
-  if (data.price <= 0) {
-    throw new Error("Precio inválido");
-  }
-
-  if (data.stock < 0) {
-    throw new Error("Stock inválido");
-  }
 
   return ProductModel.create({
     nombre: data.nombre,
@@ -64,28 +45,24 @@ export const crearProducto = async (data) => {
  * Actualizar producto
  */
 export const actualizarProducto = async (id, data) => {
-  if (data.catego) {
-    validarCategoria(data.catego);
-  }
+  if (data.catego) validarCategoria(data.catego);
 
-  if (data.price !== undefined && data.price <= 0) {
-    throw new Error("Precio inválido");
-  }
+  const product = await ProductModel.update(id, data);
+  if (!product) throw new Error("Producto no encontrado");
 
-  if (data.stock !== undefined && data.stock < 0) {
-    throw new Error("Stock inválido");
-  }
+  return product;
+};
 
-  // 🧼 Payload limpio
-  const payload = {
-    nombre: data.nombre,
-    descripcion: data.descripcion,
-    image_url: data.image_url,
-    price: data.price,
-    stock: data.stock,
-    catego: data.catego,
-    is_active: data.is_active
-  };
+/**
+ * Activar / desactivar
+ */
+export const cambiarEstado = async (id, estado) => {
+  await ProductModel.setActive(id, estado);
+};
 
-  return ProductModel.update(id, payload);
+/**
+ * Eliminar producto
+ */
+export const eliminarProducto = async (id) => {
+  await ProductModel.remove(id);
 };
