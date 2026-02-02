@@ -94,3 +94,16 @@ export const OrderItemsModel = {
     );
   }
 };
+
+// Obtener items completos para checkout
+export const getItemsForCheckout = async (order_id, client) => {
+  const { rows } = await client.query(
+    `
+    SELECT product_id, qty
+    FROM order_items
+    WHERE order_id = $1
+    `,
+    [order_id]
+  );
+  return rows;
+};

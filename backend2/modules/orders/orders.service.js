@@ -3,7 +3,7 @@ import { OrderItemsModel } from "./orderItems.model.js";
 import * as ProductModel from "../products/products.model.js";
 import { pool } from "../../config/database.js";
 
-// Estados permitidos para una orden
+// Estados permitidos de la orden
 const ESTADOS_VALIDOS = [
   "CARRITO",
   "CREADA",
@@ -14,15 +14,14 @@ const ESTADOS_VALIDOS = [
 ];
 
 /**
- * Obtiene el carrito activo del usuario
- * Si no existe, lo crea automáticamente
+ * Obtiene o crea el carrito activo del usuario
  */
 export const getCart = async (user_id) => {
   if (!user_id) throw new Error("Usuario no autenticado");
 
   let cart = await OrdersModel.getActiveCartByUser(user_id);
 
-  // Crear carrito si no existe
+  // Crea carrito si no existe
   if (!cart) {
     cart = await OrdersModel.createCart(user_id);
   }
@@ -49,7 +48,7 @@ export const addToCart = async (user_id, product_id) => {
 
   let cart = await OrdersModel.getActiveCartByUser(user_id);
 
-  // Crear carrito si no existe
+  // Crea carrito si no existe
   if (!cart) {
     cart = await OrdersModel.createCart(user_id);
   }
@@ -60,7 +59,7 @@ export const addToCart = async (user_id, product_id) => {
 
   const product = await ProductModel.findById(product_id);
 
-  // Validar producto activo
+  // Valida producto
   if (!product || !product.is_active) {
     throw new Error("Producto no disponible");
   }
@@ -76,7 +75,7 @@ export const addToCart = async (user_id, product_id) => {
 };
 
 /**
- * Actualiza la cantidad de un ítem
+ * Actualiza cantidad de un ítem del carrito
  */
 export const updateItemQty = async (user_id, item_id, qty) => {
   if (!user_id) throw new Error("Usuario no autenticado");
@@ -133,26 +132,68 @@ export const getAllOrders = async () => {
 };
 
 /**
- * Checkout del carrito
+ * Checkout con descuento real de stock (TRANSACCIÓN)
  */
 export const checkout = async (user_id, shippingData) => {
   if (!user_id) throw new Error("Usuario no autenticado");
 
-  const cart = await OrdersModel.getActiveCartByUser(user_id);
+  const client = await pool.connect();
 
-  if (!cart) throw new Error("No existe carrito activo");
-  if (cart.total <= 0) throw new Error("El carrito está vacío");
+  try {
+    await client.query("BEGIN");
 
-  // Cambia estado a PAGADA
-  await OrdersModel.updateStatus(cart.orden_id, "PAGADA");
+    // Obtiene carrito activo
+    const cart = await OrdersModel.getActiveCartByUser(user_id);
+    if (!cart) throw new Error("No existe carrito activo");
+    if (cart.total <= 0) throw new Error("El carrito está vacío");
 
-  // Guarda datos de envío
-  await OrdersModel.updateShipping(cart.orden_id, shippingData);
+    // Obtiene ítems del carrito
+    const items = await OrderItemsModel.getByOrder(cart.orden_id);
 
-  return {
-    message: "Compra pagada correctamente",
-    order_id: cart.orden_id
-  };
+    // Valida y descuenta stock
+    for (const item of items) {
+      const product = await ProductModel.findByIdForUpdate(
+        item.product_id,
+        client
+      );
+
+      if (!product || !product.is_active) {
+        throw new Error("Producto no disponible");
+      }
+
+      if (product.stock < item.qty) {
+        throw new Error(`Stock insuficiente para ${product.nombre}`);
+      }
+
+      await ProductModel.discountStock(
+        item.product_id,
+        item.qty,
+        client
+      );
+    }
+
+    // Marca orden como pagada
+    await OrdersModel.updateStatus(cart.orden_id, "PAGADA");
+
+    // Guarda datos de envío
+    await OrdersModel.updateShipping(
+      cart.orden_id,
+      shippingData
+    );
+
+    await client.query("COMMIT");
+
+    return {
+      message: "Compra pagada correctamente",
+      order_id: cart.orden_id
+    };
+
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 /**

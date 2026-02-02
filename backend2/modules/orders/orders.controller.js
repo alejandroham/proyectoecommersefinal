@@ -1,5 +1,6 @@
 import * as ordersService from "./orders.service.js";
 
+
 /* ============================
    CARRITO
 ============================ */
@@ -107,6 +108,21 @@ export const changeStatus = async (req, res) => {
 /* ============================
    DASHBOARD
 ============================ */
+
+
+
+// Dashboard admin
+export const getDashboard = async (req, res) => {
+  try {
+    const stats = await ordersService.getDashboardStats();
+    res.json(stats);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Error al obtener estadísticas del dashboard"
+    });
+  }
+};
 
 // Estadísticas dashboard admin
 export const getDashboardStats = async (req, res) => {

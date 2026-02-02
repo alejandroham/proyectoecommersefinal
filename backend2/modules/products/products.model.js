@@ -61,3 +61,29 @@ export const update = async (id, data) => {
   );
   return rows[0];
 };
+
+// Obtener producto con lock (evita ventas dobles)
+export const findByIdForUpdate = async (product_id, client) => {
+  const { rows } = await client.query(
+    `
+    SELECT *
+    FROM products
+    WHERE product_id = $1
+    FOR UPDATE
+    `,
+    [product_id]
+  );
+  return rows[0];
+};
+
+// Descontar stock
+export const discountStock = async (product_id, qty, client) => {
+  await client.query(
+    `
+    UPDATE products
+    SET stock = stock - $1
+    WHERE product_id = $2
+    `,
+    [qty, product_id]
+  );
+};
