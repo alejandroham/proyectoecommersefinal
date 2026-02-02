@@ -1,17 +1,22 @@
 import { useState } from "react";
 
-
 const CreateUser = () => {
-  // Datos del usuario
+  // ======================
+  // DATOS DEL USUARIO
+  // ======================
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("sales");
   const [password, setPassword] = useState("");
 
+  // ======================
   // UI
+  // ======================
   const [showPassword, setShowPassword] = useState(false);
 
-  // Reglas de contraseña
+  // ======================
+  // REGLAS CONTRASEÑA
+  // ======================
   const passwordRules = {
     length: password.length >= 8,
     upper: /[A-Z]/.test(password),
@@ -20,6 +25,9 @@ const CreateUser = () => {
     special: /[@$!%*?&#]/.test(password),
   };
 
+  // ======================
+  // SUBMIT
+  // ======================
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -38,9 +46,8 @@ const CreateUser = () => {
       createdAt: new Date().toISOString(),
     };
 
-    // Aquí enviarías al backend o context
+    // Demo
     console.log("Usuario creado:", newUser);
-
     alert("Usuario creado correctamente (demo)");
 
     // Reset
@@ -53,9 +60,17 @@ const CreateUser = () => {
   return (
     <div className="register-container">
       <form className="register-box" onSubmit={handleSubmit}>
-        <h2>Crear Usuario</h2>
+        {/* ======================
+            HEADER
+        ====================== */}
+        <h2>Crear cuenta</h2>
+        <p className="subtitle">
+          Regístrate para comenzar a comprar
+        </p>
 
-        {/* Nombre */}
+        {/* ======================
+            INPUTS
+        ====================== */}
         <input
           type="text"
           placeholder="Nombre completo"
@@ -64,7 +79,6 @@ const CreateUser = () => {
           required
         />
 
-        {/* Email */}
         <input
           type="email"
           placeholder="Correo electrónico"
@@ -73,13 +87,15 @@ const CreateUser = () => {
           required
         />
 
-        {/* Rol */}
         <select value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="sales">Sales</option>
           <option value="admin">Admin</option>
+          <option value="sales">Buyer</option>
+          
         </select>
 
-        {/* Password */}
+        {/* ======================
+            PASSWORD
+        ====================== */}
         <div className="password-field">
           <input
             type={showPassword ? "text" : "password"}
@@ -88,10 +104,14 @@ const CreateUser = () => {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <span onClick={() => setShowPassword(!showPassword)}>👁️</span>
+          <span onClick={() => setShowPassword(!showPassword)}>
+            👁️
+          </span>
         </div>
 
-        {/* Reglas */}
+        {/* ======================
+            REGLAS
+        ====================== */}
         <ul className="password-rules">
           <li className={passwordRules.length ? "ok" : "error"}>
             Mínimo 8 caracteres
@@ -110,7 +130,18 @@ const CreateUser = () => {
           </li>
         </ul>
 
-        <button type="submit">Crear Usuario</button>
+        {/* ======================
+            CTA
+        ====================== */}
+        <button type="submit">Crear cuenta</button>
+
+        {/* ======================
+            FOOTER
+        ====================== */}
+        <div className="register-footer">
+          ¿Ya tienes cuenta?{" "}
+          <a href="/login">Inicia sesión</a>
+        </div>
       </form>
     </div>
   );

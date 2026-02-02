@@ -1,3 +1,185 @@
+/* ===============================
+   PROFILE PAGE
+================================ */
+
 .profile-page {
+  min-height: calc(100vh - 140px);
+  background: radial-gradient(circle at top, #0f2a3d, #050b14);
+  display: flex;
+  justify-content: center;
   padding: 60px 20px;
+}
+
+/* ===============================
+   CONTAINER
+================================ */
+
+.profile-container {
+  width: 100%;
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+/* ===============================
+   LEFT PANEL
+================================ */
+
+.profile-left {
+  background: linear-gradient(160deg, #f3f4f6, #e5e7eb);
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 16px;
+  border: 4px solid #ffffff;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.profile-role {
+  margin-top: 10px;
+  display: inline-block;
+  background: #fde68a;
+  color: #92400e;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ===============================
+   RIGHT PANEL
+================================ */
+
+.profile-right {
+  padding: 40px;
+}
+
+.profile-right h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  color: #111827;
+}
+
+/* ===============================
+   FORM
+================================ */
+
+.profile-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.profile-form .full {
+  grid-column: span 2;
+}
+
+.profile-form label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.profile-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  font-size: 14px;
+}
+
+.profile-form input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ===============================
+   ACTIONS
+================================ */
+
+.profile-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 14px;
+}
+
+.profile-actions button {
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Buttons */
+
+.btn-edit {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-edit:hover {
+  background: #1d4ed8;
+}
+
+.btn-save {
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.btn-save:hover {
+  background: #15803d;
+}
+
+.btn-cancel {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+  .profile-container {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form .full {
+    grid-column: span 1;
+  }
 }

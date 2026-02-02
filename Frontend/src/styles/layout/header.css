@@ -152,28 +152,47 @@
   gap: 6px;
 }
 
-/* =========================
-   MENÚ CATEGORÍAS
-========================= */
+/* ===============================
+   CATEGORY MENU – FORCE HORIZONTAL
+================================ */
+
 .category-menu {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.category-item {
-  font-size: 14px;
-  font-weight: 500;
-  color: #2b2b2b !important;
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+/* Bootstrap override */
+.category-menu .navbar-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content:center !important;
+  width: 100% !important;
 }
 
-.category-item:hover {
+/* Links */
+.category-menu .nav-link,
+.category-item {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Hover */
+.category-menu .nav-link:hover {
   color: #6f2cff !important;
 }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .category-menu .navbar-nav {
+    justify-content: space-between !important;
+  }
+}
+
 
 /* =========================
    UTILIDADES

@@ -6,9 +6,9 @@ const CategoryMenu = ({ role }) => {
   const menuItems = MENUS[role] || [];
 
   return (
-    <Navbar className="category-menu navbar-expand-md navbar-light">
-      <Container fluid>
-        <Nav className="w-100 justify-content-around text-center">
+    <Navbar className="category-menu" expand="md">
+      <Container className="category-container">
+        <Nav className="category-nav">
           {menuItems.map((item, index) => (
             <Nav.Link
               key={index}
@@ -16,8 +16,8 @@ const CategoryMenu = ({ role }) => {
               to={item.path}
               className="category-item"
             >
-              {item.icon}{" "}
-              <span className="d-none d-md-inline">{item.label}</span>
+              <span className="icon">{item.icon}</span>
+              <span className="label">{item.label}</span>
             </Nav.Link>
           ))}
         </Nav>

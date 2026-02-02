@@ -1,24 +1,26 @@
-/* ===== CARD BASE ===== */
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
+/* =========================
+   PRODUCT CARD
+========================= */
 
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 32px rgba(0,0,0,.12);
-}
-
-/* ===== PRODUCT CARD ===== */
 .product-card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-radius: 16px;
+  padding: 16px;
   text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Imagen */
-.product-card__image {
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   IMAGEN
+========================= */
+.product-image {
   height: 180px;
   display: flex;
   align-items: center;
@@ -26,27 +28,79 @@
   margin-bottom: 12px;
 }
 
-.product-card__image img {
+.product-image img {
   max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 
-/* Info */
-.product-card__title {
+/* =========================
+   INFO
+========================= */
+.product-info h5 {
   font-size: 15px;
   font-weight: 600;
   margin-bottom: 6px;
 }
 
-.product-card__price {
+.product-price {
   font-size: 16px;
   font-weight: 700;
   color: var(--success);
 }
 
-/* Acciones */
-.product-card__actions {
+/* =========================
+   ACCIONES
+========================= */
+.product-actions {
   display: flex;
   gap: 10px;
   margin-top: 14px;
+}
+
+/* Botones base */
+.product-actions button {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* Agregar */
+.btn-add {
+  background: linear-gradient(135deg, #198754, #20c997);
+  color: #ffffff;
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+}
+
+/* Detalle */
+.btn-detail {
+  background: #ffffff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn-detail:hover {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* =========================
+   DARK MODE
+========================= */
+body.dark .product-card {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+body.dark .product-info h5,
+body.dark .product-price {
+  color: #e5e7eb;
 }

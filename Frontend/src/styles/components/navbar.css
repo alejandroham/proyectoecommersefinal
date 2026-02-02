@@ -1,0 +1,87 @@
+/* ===============================
+   CATEGORY NAVBAR – PREMIUM
+================================ */
+
+.category-menu {
+  background: #0b1d2a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* CONTENEDOR CENTRAL (NO FULL WIDTH) */
+.category-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* NAV */
+.category-nav {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 22px; /* 👈 espaciado controlado */
+}
+
+/* ITEM */
+.category-item {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #e5e7eb !important;
+  text-decoration: none;
+  white-space: nowrap;
+
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+/* ICONO */
+.category-item .icon {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* TEXTO */
+.category-item .label {
+  letter-spacing: 0.2px;
+}
+
+/* HOVER */
+.category-item:hover {
+  color: #ffffff !important;
+}
+
+/* INDICADOR SUTIL */
+.category-item::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: #38bdf8;
+  transition: width 0.25s ease;
+}
+
+.category-item:hover::after {
+  width: 100%;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .category-nav {
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .category-item .label {
+    display: none;
+  }
+}
+

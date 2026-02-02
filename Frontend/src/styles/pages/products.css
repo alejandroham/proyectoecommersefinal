@@ -1,5 +1,55 @@
+/* ===============================
+   PRODUCTS PAGE LAYOUT
+================================ */
+
+.products-layout {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 20px;
+
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* ===============================
+   PRODUCTS GRID
+================================ */
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 24px;
+  gap: 28px;
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+
+.products-grid:empty::after {
+  content: "No se encontraron productos con estos filtros";
+  color: #6b7280;
+  font-size: 15px;
+  margin-top: 40px;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1024px) {
+  .products-layout {
+    grid-template-columns: 200px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .products-grid {
+    gap: 20px;
+  }
 }
