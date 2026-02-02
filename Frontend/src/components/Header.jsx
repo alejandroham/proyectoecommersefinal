@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { MENUS } from "../data/menus";
-import "../styles/Header.css";
+
 
 const Header = ({ theme, setTheme }) => {
   const { user, logout } = useAuth();

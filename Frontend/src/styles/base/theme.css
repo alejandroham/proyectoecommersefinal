@@ -1,0 +1,14 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+  --bg-main: #0f172a;
+  --bg-card: #020617;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --border: #1f2937;
+}

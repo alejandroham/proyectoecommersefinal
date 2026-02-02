@@ -5,7 +5,7 @@
  * - Diseño moderno y limpio
  */
 
-import "../styles/Footer.css";
+
 
 function Footer() {
   return (

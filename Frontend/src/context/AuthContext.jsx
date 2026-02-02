@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 export function AuthProvider({ children }) {
@@ -9,14 +8,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // ==========================
-  // LOGIN (JWT)
+  // LOGIN
   // ==========================
   const login = async (email, password) => {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
     });
 
@@ -25,64 +22,56 @@ export function AuthProvider({ children }) {
     }
 
     const data = await res.json();
-
     localStorage.setItem("token", data.token);
 
-    // cargar usuario real
-    await loadUser();
-
+    await loadUser(); // carga datos reales
     return data;
   };
 
+  // ==========================
+  // CARGAR USUARIO DESDE TOKEN
+  // ==========================
+  const loadUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
-  // CArga Información del usuario con el Token
-
- const loadUser = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      `${import.meta.env.VITE_API_URL}/auth/me`,
-      {
+    try {
+      const res = await fetch(`${API_URL}/users/me`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-    if (!res.ok) throw new Error("No autorizado");
+      if (!res.ok) throw new Error("No autorizado");
 
-    const data = await res.json();
+      const data = await res.json();
 
-    // NORMALIZAMOS EL USUARIO AQUÍ
-    setUser({
-      id: data.user_id,
-      email: data.email,
-      role: data.role,
-      nombres: data.nombres || data.email.split("@")[0],
-    });
+      // 👉 GUARDAMOS EL USUARIO COMPLETO
+      setUser(data);
 
-  } catch {
-    localStorage.removeItem("token");
-    setUser(null);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      console.error("Error cargando usuario", error);
+      localStorage.removeItem("token");
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-
+  // ==========================
   // LOGOUT
+  // ==========================
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
-  // AUTO LOGIN AL RECARGAR
-
+  // ==========================
+  // AUTO LOGIN
+  // ==========================
   useEffect(() => {
     loadUser();
   }, []);
@@ -91,6 +80,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
+        setUser, // 🔥 CLAVE PARA PERFIL
         login,
         logout,
         loading

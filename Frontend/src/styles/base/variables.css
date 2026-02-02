@@ -1,0 +1,16 @@
+:root {
+  --primary: #0d6efd;
+  --secondary: #6c757d;
+  --success: #198754;
+  --danger: #dc3545;
+
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-dark: #0f172a;
+
+  --text-main: #0f172a;
+  --text-muted: #6b7280;
+
+  --border-color: #e5e7eb;
+  --radius: 12px;
+}

@@ -9,8 +9,7 @@
 import { useEffect, useState } from "react";
 import Filters from "../components/Filters";
 import ProductCard from "../components/ProductCard";
-import "../styles/Products.css";
-import "../styles/Filters.css";
+
 
 const API_URL = import.meta.env.VITE_API_URL;
 

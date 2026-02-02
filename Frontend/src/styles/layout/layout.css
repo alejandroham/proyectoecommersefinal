@@ -1,0 +1,19 @@
+.top-bar {
+  background: var(--bg-dark);
+  color: white;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-header {
+  background: var(--primary);
+  padding: 16px 24px;
+  color: white;
+}
+
+.header-actions {
+  display: flex;
+  gap: 20px;
+}

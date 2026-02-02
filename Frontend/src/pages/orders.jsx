@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import "../styles/Orders.css";
+
 
 function Orders() {
   const { user } = useAuth();

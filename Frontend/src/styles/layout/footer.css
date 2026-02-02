@@ -1,24 +1,28 @@
-/* ===== FOOTER ===== */
+/* =========================
+   FOOTER GLOBAL
+========================= */
+
 .footer {
   background: linear-gradient(135deg, #0b3c49, #041f24);
   color: #ffffff;
-  padding: 25px 10%;
+  padding: 32px 10%;
   margin-top: auto;
 }
 
-/* Contenedor */
+/* CONTENEDOR */
 .footer-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 24px;
   align-items: center;
   text-align: center;
 }
 
-/* Marca */
+/* MARCA */
 .footer-brand h4 {
-  margin-bottom: 5px;
+  font-size: 18px;
   font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .footer-brand p {
@@ -26,11 +30,12 @@
   opacity: 0.85;
 }
 
-/* Links */
+/* LINKS */
 .footer-links {
   display: flex;
-  gap: 15px;
+  gap: 16px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .footer-links a {
@@ -38,7 +43,7 @@
   text-decoration: none;
   font-size: 0.9rem;
   opacity: 0.85;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .footer-links a:hover {
@@ -46,8 +51,23 @@
   transform: translateY(-2px);
 }
 
-/* Copy */
+/* COPY */
 .footer-copy {
   font-size: 0.8rem;
   opacity: 0.75;
+  line-height: 1.4;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 576px) {
+  .footer {
+    padding: 24px 16px;
+  }
+
+  .footer-content {
+    gap: 18px;
+  }
 }

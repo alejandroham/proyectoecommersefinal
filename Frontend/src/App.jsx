@@ -25,8 +25,8 @@ import PrivateRoute from "./components/PrivateRoute";
 // Contextos globales
 import { CartProvider } from "./context/CartContext";
 
-// Estilos globales
-import "./App.css";
+
+
 
 function App() {
   // ==========================

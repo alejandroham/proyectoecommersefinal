@@ -1,0 +1,52 @@
+/* ===== CARD BASE ===== */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(0,0,0,.12);
+}
+
+/* ===== PRODUCT CARD ===== */
+.product-card {
+  text-align: center;
+}
+
+/* Imagen */
+.product-card__image {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.product-card__image img {
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Info */
+.product-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.product-card__price {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--success);
+}
+
+/* Acciones */
+.product-card__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}

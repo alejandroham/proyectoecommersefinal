@@ -1,0 +1,196 @@
+/* =========================
+   TOP BAR
+========================= */
+.top-bar {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 13px;
+  padding: 0 16px;
+}
+
+.top-bar.dark {
+  background: #040f16;
+  color: #ffffff;
+}
+
+.top-bar.light {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Toggle tema */
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* =========================
+   HEADER PRINCIPAL
+========================= */
+.header-wrapper {
+  display: grid;
+  grid-template-columns: minmax(auto, 1280px);
+  justify-content: center;
+  padding: 0 2.2%;
+}
+
+.header-wrapper.dark {
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #ffffff;
+}
+
+.header-wrapper.light {
+  background: #757761;
+  color: #ffffff;
+}
+
+.header-inner {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* =========================
+   LOGO
+========================= */
+.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.logo strong {
+  color: #0b4f6c;
+}
+
+/* =========================
+   SEARCH
+========================= */
+.search-bar {
+  flex: 1;
+  max-width: 520px;
+}
+
+/* =========================
+   DERECHA
+========================= */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Acciones */
+.header-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+}
+
+.header-action:hover {
+  opacity: 0.85;
+}
+
+/* Badge carrito */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  font-size: 11px;
+  padding: 4px 6px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   USUARIO
+========================= */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.user-name {
+  font-size: 13px;
+}
+
+.user-role {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* Logout */
+.logout-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* =========================
+   MENÚ CATEGORÍAS
+========================= */
+.category-menu {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.category-item {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2b2b2b !important;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.category-item:hover {
+  color: #6f2cff !important;
+}
+
+/* =========================
+   UTILIDADES
+========================= */
+.desktop-only {
+  display: flex;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .header-inner {
+    justify-content: space-between;
+  }
+}
