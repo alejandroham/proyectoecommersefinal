@@ -10,7 +10,7 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
-import CreateUser from "./pages/CreateUser";
+import CreateUser from "./pages/createUser";
 import Stock from "./pages/Stock";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
