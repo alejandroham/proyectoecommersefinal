@@ -59,7 +59,7 @@ function Register() {
   return (
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
-        <h2>Crear cuenta</h2>
+        <h2 style="color: #0a0f1e;">Crear cuenta</h2>
         <p className="login-subtitle">
           Regístrate para comenzar a comprar
         </p>

@@ -44,7 +44,7 @@ function Login() {
   return (
     <div className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
-        <h2>Iniciar sesión</h2>
+        <h2 style="color: #0a0f1e;">Iniciar sesión</h2>
 
         {error && <div className="login-error">{error}</div>}
 
