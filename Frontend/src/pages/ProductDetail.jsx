@@ -1,14 +1,20 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
-
+import { useAuth } from "../context/AuthContext";
 
 function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const { addToCart } = useCart();
+  const { user } = useAuth();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Control del popup
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     fetch(`https://proyectoecommersefinal.onrender.com/products/${id}`)
@@ -26,13 +32,22 @@ function ProductDetail() {
       });
   }, [id]);
 
+  // ===== LÓGICA DEL BOTÓN =====
+  const handleAddToCart = () => {
+    if (!user) {
+      setShowPopup(true);
+      return;
+    }
+
+    addToCart({ ...product, quantity: 1 });
+  };
+
   if (loading) return <p className="center">Cargando producto...</p>;
   if (!product) return <p>No encontrado</p>;
 
   return (
     <div className="product-detail-page">
 
-      {/* ===== SECCIÓN PRINCIPAL ===== */}
       <div className="product-detail-main">
 
         {/* IMAGEN */}
@@ -63,21 +78,42 @@ function ProductDetail() {
             {product.description}
           </p>
 
-          {/* BOTONES */}
+          {/* BOTÓN ÚNICO */}
           <div className="product-actions">
             <button
               className="btn-primary"
-              onClick={() => addToCart({ ...product, quantity: 1 })}
+              onClick={handleAddToCart}
+              disabled={product.stock <= 0}
             >
               🛒 Agregar al carrito
-            </button>
-
-            <button className="btn-secondary">
-              ⚡ Comprar ahora
             </button>
           </div>
         </div>
       </div>
+
+      {/* ===== POPUP SI NO ESTÁ LOGUEADO ===== */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h3>Debes iniciar sesión</h3>
+            <p>Para agregar productos al carrito</p>
+
+            <button
+              onClick={() => navigate("/login")}
+              className="btn-primary"
+            >
+              Ir a iniciar sesión
+            </button>
+
+            <button
+              className="btn-secondary"
+              onClick={() => setShowPopup(false)}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

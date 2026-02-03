@@ -79,21 +79,52 @@ function Cart() {
 
         {cart.map(item => (
           <div key={item.id} className="cart-item">
-            <img src={item.image} alt={item.name} />
-            <strong>{item.name}</strong>
+
+            {/* IMAGEN CLICKEABLE */}
+            <div
+              className="cart-item-image clickable"
+              onClick={() => navigate(`/product/${item.id}`)}
+            >
+              <img src={item.image} alt={item.name} />
+            </div>
+
+            {/* NOMBRE CLICKEABLE */}
+            <strong
+              className="clickable"
+              onClick={() => navigate(`/product/${item.id}`)}
+            >
+              {item.name}
+            </strong>
 
             <span>
               ${item.price.toLocaleString("es-CL")}
             </span>
 
-            <div>
-              <button onClick={() => decreaseQuantity(item.id)}>−</button>
-              <span>{item.quantity}</span>
-              <button onClick={() => increaseQuantity(item.id)}>+</button>
+            {/* CONTADOR MEJORADO */}
+            <div className="cart-item-qty">
+              <button
+                className="qty-btn minus"
+                onClick={() => decreaseQuantity(item.id)}
+              >
+                −
+              </button>
+
+              <span className="qty-number">{item.quantity}</span>
+
+              <button
+                className="qty-btn plus"
+                onClick={() => increaseQuantity(item.id)}
+              >
+                +
+              </button>
             </div>
 
-            <button onClick={() => removeFromCart(item.id)}>
-              Eliminar
+            {/* BOTÓN ELIMINAR */}
+            <button
+              className="delete-btn"
+              onClick={() => removeFromCart(item.id)}
+            >
+              🗑 Eliminar
             </button>
           </div>
         ))}
