@@ -46,9 +46,9 @@ function ProductDetail() {
   if (!product) return <p>No encontrado</p>;
 
   return (
-    <div className="product-detail-page">
+    <div className="product-detail-page theme-aware">
 
-      <div className="product-detail-main">
+      <div className="product-detail-main theme-aware-card">
 
         {/* IMAGEN */}
         <div className="product-detail-image">
@@ -56,14 +56,14 @@ function ProductDetail() {
         </div>
 
         {/* INFO */}
-        <div className="product-detail-info">
-          <h1>{product.name}</h1>
+        <div className="product-detail-info theme-aware-text">
+          <h1 className="theme-title">{product.name}</h1>
 
-          <div className="product-price">
+          <div className="product-price theme-price">
             ${product.price.toLocaleString()}
           </div>
 
-          <p className="product-stock">
+          <p className="product-stock theme-muted">
             Stock disponible:{" "}
             <strong
               style={{
@@ -74,7 +74,7 @@ function ProductDetail() {
             </strong>
           </p>
 
-          <p className="product-description">
+          <p className="product-description theme-muted">
             {product.description}
           </p>
 
@@ -93,8 +93,8 @@ function ProductDetail() {
 
       {/* ===== POPUP SI NO ESTÁ LOGUEADO ===== */}
       {showPopup && (
-        <div className="popup-overlay">
-          <div className="popup">
+        <div className="popup-overlay theme-popup-overlay">
+          <div className="popup theme-popup">
             <h3>Debes iniciar sesión</h3>
             <p>Para agregar productos al carrito</p>
 

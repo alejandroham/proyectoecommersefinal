@@ -71,3 +71,17 @@
     gap: 18px;
   }
 }
+
+.footer {
+  background: #041c2c;
+  color: white;
+  padding: 20px;
+  width: 100%;
+
+  /* CLAVE */
+  margin-top: auto;
+}
+
+body.dark .footer {
+  background: #020a14;
+}

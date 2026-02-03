@@ -25,15 +25,19 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { MENUS } from "../data/menus";
 
-
 const Header = ({ theme, setTheme }) => {
   const { user, logout } = useAuth();
   const { cart } = useCart();
 
   const cartCount = cart.length;
 
-  // 🔑 Rol efectivo
+  // Rol efectivo
   const role = user?.role || "public";
+
+  // Toggle sincronizado con App.jsx
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
   return (
     <>
@@ -43,9 +47,7 @@ const Header = ({ theme, setTheme }) => {
 
         <button
           className="theme-toggle"
-          onClick={() =>
-            setTheme(theme === "dark" ? "light" : "dark")
-          }
+          onClick={toggleTheme}
           title="Cambiar tema"
         >
           {theme === "dark" ? "☀️" : "🌙"}
@@ -146,7 +148,7 @@ const Header = ({ theme, setTheme }) => {
       </header>
 
       {/* ================= MENÚ ================= */}
-      <Navbar className="category-menu navbar-expand-md">
+      <Navbar className={`category-menu ${theme} navbar-expand-md`}>
         <Container fluid>
           <Nav className="w-100 justify-content-around text-center">
             {(MENUS[role] || MENUS.public).map((item, index) => (

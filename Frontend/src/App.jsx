@@ -1,8 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -15,6 +16,7 @@ import Stock from "./pages/Stock";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./components/PrivateRoute";
 import { CartProvider } from "./context/CartContext";
+import "./App.css";
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
@@ -27,57 +29,63 @@ function App() {
 
   return (
     <CartProvider>
-      {/* HEADER */}
-      <Header theme={theme} setTheme={setTheme} />
 
-      <main>
-        <Routes>
-          {/* ======================
-              RUTAS PÚBLICAS
-          ====================== */}
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/orders" element={<Orders />} />
+      {/* 🔹 CONTENEDOR GLOBAL PARA QUE EL FOOTER Y EL FONDO FUNCIONEN BIEN */}
+      <div className="app-container">
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+        {/* HEADER */}
+        <Header theme={theme} setTheme={setTheme} />
 
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            }
-          />
+        {/* CONTENIDO PRINCIPAL */}
+        <main className="main-container">
+          <Routes>
 
-          {/* ======================
-              RUTAS PROTEGIDAS
-          ====================== */}
-          <Route
-            path="/createUser"
-            element={
-              <PrivateRoute roles={["admin"]}>
-                <CreateUser />
-              </PrivateRoute>
-            }
-          />
+            {/* ===== RUTAS PÚBLICAS ===== */}
+            <Route path="/" element={<Home />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/orders" element={<Orders />} />
 
-          <Route
-            path="/stock"
-            element={
-              <PrivateRoute roles={["admin"]}>
-                <Stock />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </main>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-      {/* FOOTER */}
-      <Footer />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ===== RUTAS PROTEGIDAS ===== */}
+            <Route
+              path="/createUser"
+              element={
+                <PrivateRoute roles={["admin"]}>
+                  <CreateUser />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/stock"
+              element={
+                <PrivateRoute roles={["admin"]}>
+                  <Stock />
+                </PrivateRoute>
+              }
+            />
+
+          </Routes>
+        </main>
+
+        {/* FOOTER */}
+        <Footer />
+
+      </div>
+
     </CartProvider>
   );
 }

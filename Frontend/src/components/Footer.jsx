@@ -4,7 +4,7 @@
  * - Siempre visible abajo
  * - Diseño moderno y limpio
  */
-
+import "../styles/layout/footer.css";
 
 
 function Footer() {

@@ -1,41 +1,26 @@
-/* ============================= */
-/* RESET BÁSICO */
-/* ============================= */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* ===================================================== */
+/*                  ESTRUCTURA BASE                      */
+/* ===================================================== */
+
+html, body, #root {
+  height: 100%;
   margin: 0;
   padding: 0;
 }
 
-html, body {
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-  background-color: var(--color-bg-main);
-  color: var(--color-text-primary);
-}
-
-.app {
-  min-height: 100vh;
+#root {
   display: flex;
   flex-direction: column;
 }
 
-.main {
+main {
   flex: 1;
+  width: 100%;
 }
 
-/* ===== TEMA GLOBAL ===== */
-
-body.dark {
-  --bg-main: #0f172a;
-  --bg-card: #111827;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
-  --border-color: #1f2937;
-  --primary: #3b82f6;
-}
+/* ===================================================== */
+/*                VARIABLES DEL TEMA                     */
+/* ===================================================== */
 
 body.light {
   --bg-main: #f9fafb;
@@ -46,205 +31,172 @@ body.light {
   --primary: #2563eb;
 }
 
-body {
-  background-color: var(--bg-main);
-  color: var(--text-main);
-  transition: background 0.3s ease, color 0.3s ease;
+body.dark {
+  --bg-main: #0a0f1e;
+  --bg-card: #0d1326;
+  --text-main: #ffffff;
+  --text-muted: #cbd5e1;
+  --border-color: #1b2340;
+  --primary: #4dabff;
+}
+
+/* ===================================================== */
+/*              MODO OSCURO GLOBAL REAL                  */
+/* ===================================================== */
+
+body.dark,
+body.dark #root,
+body.dark main {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* TODAS LAS PÁGINAS */
+body.dark .home-page,
+body.dark .products-layout,
+body.dark .product-detail-page,
+body.dark .cart-page,
+body.dark .orders-page,
+body.dark .stock-layout,
+body.dark .login-page,
+body.dark .register-page {
+  background-color: var(--bg-main) !important;
+  color: var(--text-main) !important;
 }
 
 
+/* ===================================================== */
+/*                   TARJETAS                            */
+/* ===================================================== */
 
-/* ============================= */
-/* VARIABLES DE COLOR (THEME) */
-/* ============================= */
-:root {
-  /* 🎨 Colores base */
-  --color-bg-main: #1A1B26;        /* Fondo general (vainilla suave, descansa la vista) */
-  --color-bg-dark: #1A1B26;        /* Fondos oscuros: header, footer */
-  --color-bg-light: #FFFFFF;       /* Contenedores claros */
-
-  /* 🧠 Texto */
-  --color-text-primary: #2F3136;   /* Texto principal */
-  --color-text-inverse: #FFFFFF;   /* Texto sobre fondos oscuros */
-  --color-text-muted: #9E9E9E;     /* Texto secundario */
-
-  /* 🌊 Identidad */
-  --color-brand-primary: #005F6B;  /* Azul petróleo (confianza, tecnología) */
-  --color-brand-secondary: #0B4F6C;
-
-  /* 🔥 Acentos / Acción */
-  --color-accent-pink: #FF1F8A;    /* Llamadas premium / detalles */
-  --color-accent-green: #C6FF5E;   /* Acciones positivas */
-  --color-accent-orange: #FBA92C;  /* Botones principales */
-
-  /* 🧩 UI */
-  --color-border: #D0D0D0;
-  --color-hover: #0B4F6C;
-  --color-active: #07404F;
-
-  /* 🌈 Gradientes */
-  --gradient-thermal: linear-gradient(
-    135deg,
-    #1A1B26,
-    #005F6B,
-    #0B4F6C
-  );
+body.dark .card,
+body.dark .product-card,
+body.dark .cart-item,
+body.dark .order-card {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
-/* ============================= */
-/* Links y Botones */
-a {
-  text-decoration: none;
-  color: inherit;
+/* ===================================================== */
+/*                    TEXTOS                             */
+/* ===================================================== */
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark p,
+body.dark span,
+body.dark strong,
+body.dark label {
+  color: var(--text-main) !important;
 }
 
-a:hover,
-button:hover {
-  color: var(--color-hover);
+/* ===================================================== */
+/*                    INPUTS                             */
+/* ===================================================== */
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: #0a1020 !important;
+  border: 1px solid var(--border-color) !important;
+  color: white !important;
 }
 
-a:active,
-button:active {
-  color: var(--color-active);
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-/* TOP BAR */
-.top-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: 6px 16px;
-  font-size: 14px;
-}
-
-.top-bar.dark {
-  background: var(--color-bg-dark);
-  color: var(--color-text-inverse);
-}
-
-.top-bar.light {
-  background: var(--color-bg-light);
-  color: var(--color-text-primary);
-}
-.header-wrapper {
-  background: var(--gradient-thermal);
-  display: grid;
-  grid-template-columns: minmax(auto, 1280px);
-  justify-content: center;
-  padding: 0 2.2%;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  height: 110px;
-}
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  color: var(--color-text-inverse);
-}
-.search-bar {
-  flex: 1;
-  display: flex;
-  gap: 8px;
-}
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.header-action {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-inverse);
-}
-
-.user-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.1;
-}
-
-.cart-badge {
-  position: absolute;
-  top: -6px;
-  right: -10px;
-  background: var(--color-accent-pink);
-  color: white;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 12px;
-}
-.category-menu {
-  background: var(--color-bg-light);
-  border-top: 1px solid var(--color-border);
-}
-.desktop-only {
-  display: flex;
-}
-
-@media (max-width: 768px) {
-  .desktop-only {
-    display: none;
-  }
-
-  .header-inner {
-    justify-content: space-between;
-  }
-}
-
-
-/*footer*/
+/* ===================================================== */
+/*                    FOOTER                             */
+/* ===================================================== */
 
 .footer {
-  bottom: 0;
-  width: 100%;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  padding: 20px;
-  text-align: center;
+  margin-top: auto !important;
 }
 
-
-/* ===== LAYOUT GLOBAL ===== */
-html, body, #root {
-  height: 100%;
+body.dark .footer {
+  background: #020a14 !important;
 }
 
-#root {
-  display: flex;
-  flex-direction: column;
+/* ===================================================== */
+/*                    BOTONES                            */
+/* ===================================================== */
+
+body.dark button {
+  color: white !important;
 }
 
-main {
-  flex: 1;
+/* ===================================================== */
+/*                    TABLAS                             */
+/* ===================================================== */
+
+body.dark table {
+  background: var(--bg-card) !important;
 }
 
-/* ===== DARK MODE GLOBAL ===== */
-
-body.dark {
-  background-color: #0f172a; /* azul oscuro elegante */
-  color: #0f172a;
+body.dark th,
+body.dark td {
+  border-color: var(--border-color) !important;
 }
 
-body.light {
-  background-color: #f8fafc;
-  color: #0f172a;
+/* ===================================================== */
+/*        FIX VISIBILIDAD BOTÓN VER DETALLE              */
+/* ===================================================== */
+
+body.dark .btn-detail {
+  background: #ffffff !important;
+  color: #1e40af !important;
+  border: 1px solid #2563eb !important;
+  font-weight: 600;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-/* Para que el fondo NO se corte */
-html,
-body,
-#root {
-  min-height: 100%;
+body.dark .btn-detail:hover {
+  background: #e5edff !important;
+  color: #1e3a8a !important;
+}
+
+/* Por si es <a> en vez de button */
+body.dark a.btn-detail {
+  background: #ffffff !important;
+  color: #1e40af !important;
+}
+
+/* ===================================================== */
+/*        FIX CARD ACCIONES EN PRODUCTS                  */
+/* ===================================================== */
+
+body.dark .product-actions {
+  background: transparent !important;
+}
+
+body.dark .product-card .btn-add {
+  background: #059669 !important; /* verde */
+  color: white !important;
+}
+
+/* ===================================================== */
+/*        FIX TEXTO DENTRO DE CARDS                      */
+/* ===================================================== */
+
+body.dark .product-card h5,
+body.dark .product-card .product-price,
+body.dark .product-card .product-stock {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* ===================================================== */
+/*        FIX SECCIÓN HOME (CARDS BLANCAS)               */
+/* ===================================================== */
+
+body.dark .home-page .feature-card,
+body.dark .home-page .info-card {
+  background: #0d1326 !important;
+  border: 1px solid #1b2340 !important;
+}
+
+body.dark .home-page .feature-card p,
+body.dark .home-page .feature-card h3 {
+  color: white !important;
 }

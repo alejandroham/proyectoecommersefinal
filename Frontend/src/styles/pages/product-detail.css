@@ -1,32 +1,42 @@
 /* ===============================
-   PRODUCT DETAIL PAGE
+   CONTENEDOR GENERAL
 ================================ */
 
 .product-detail-page {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background: var(--bg-main) !important;
+  color: var(--text-main) !important;
 }
 
 /* ===============================
-   MAIN LAYOUT
+   TARJETA PRINCIPAL
 ================================ */
 
 .product-detail-main {
+  width: 100%;
+  max-width: 1100px;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: flex-start;
+  gap: 32px;
+
+  background: var(--bg-card) !important;
+  border-radius: 18px;
+  padding: 24px;
 }
 
 /* ===============================
-   IMAGE
+   IMAGEN
 ================================ */
 
 .product-detail-image {
-  background: #f9fafb;
-  border-radius: 18px;
-  padding: 24px;
+  background: var(--bg-card) !important;
+  border-radius: 16px;
+  padding: 16px;
 
   display: flex;
   align-items: center;
@@ -40,83 +50,43 @@
 }
 
 /* ===============================
-   INFO
+   INFO — AQUÍ ESTABA TODO EL ERROR
 ================================ */
 
 .product-detail-info h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: #111827;
+  color: var(--text-main) !important;
+  font-size: 26px;
+  opacity: 1 !important;
 }
 
 .product-price {
-  font-size: 26px;
-  font-weight: 800;
-  color: #2563eb;
-  margin-bottom: 12px;
+  color: var(--primary) !important;
+  font-size: 24px;
+  font-weight: bold;
+  opacity: 1 !important;
 }
 
 .product-stock {
-  font-size: 14px;
-  margin-bottom: 16px;
-  color: #374151;
+  color: var(--text-muted) !important;
 }
 
 .product-description {
-  font-size: 15px;
+  color: var(--text-muted) !important;
   line-height: 1.6;
-  color: #4b5563;
-  margin-bottom: 28px;
 }
 
 /* ===============================
-   ACTIONS
+   BOTONES
 ================================ */
-
-.product-actions {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 14px 22px;
-  border-radius: 14px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-}
 
 .btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+
   background: #2563eb;
-  color: #ffffff;
-}
-
-.btn-primary:hover {
-  background: #1d4ed8;
-}
-
-.btn-secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.btn-secondary:hover {
-  background: #d1d5db;
-}
-
-/* ===============================
-   CENTER TEXT
-================================ */
-
-.center {
-  text-align: center;
-  margin-top: 60px;
-  font-size: 16px;
-  color: #6b7280;
+  color: white;
+  font-weight: bold;
 }
 
 /* ===============================
@@ -126,10 +96,27 @@
 @media (max-width: 900px) {
   .product-detail-main {
     grid-template-columns: 1fr;
-    gap: 28px;
   }
+}
 
-  .product-detail-image img {
-    max-height: 320px;
-  }
+/* ===============================
+   🔥 FORZADO DARK REAL
+================================ */
+
+body.dark .product-detail-page {
+  background: #0a0f1e !important;
+}
+
+body.dark .product-detail-main {
+  background: #0d1326 !important;
+}
+
+body.dark .product-detail-info h1,
+body.dark .product-detail-info p,
+body.dark .product-detail-info span {
+  color: #ffffff !important;
+}
+
+body.dark .product-price {
+  color: #4dabff !important;
 }
